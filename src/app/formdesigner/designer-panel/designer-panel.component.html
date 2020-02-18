@@ -1,1 +1,14 @@
-<p>designer-panel works!</p>
+<div style="border: solid 1px black; min-height: 500px;"
+    dndDropzone
+    (dndDragover)="onDragover($event)"
+    (dndDrop)="onDrop($event)">
+    
+    dropzone 
+    <!--optional placeholder element for dropzone-->
+    <!--will be removed from DOM on init-->
+    <div style="border: 1px orangered solid; border-radius: 5px; padding: 15px;"
+         dndPlaceholderRef>
+        placeholder
+    </div>
+
+</div>

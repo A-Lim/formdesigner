@@ -1,6 +1,35 @@
-<div class="card" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      
+<!-- <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <div class="card" *ngFor="let fieldType of fieldTypes">
+      <div class="card-body">
+        {{ fieldType.label }}
+      </div>
     </div>
   </div>
+</div> -->
+
+<!--a draggable element-->
+<div class="card"
+    [dndDraggable]="draggable.data"
+    [dndEffectAllowed]="draggable.effectAllowed"
+    [dndDisableIf]="draggable.disable"
+    (dndStart)="onDragStart($event)"
+    (dndCopied)="onDraggableCopied($event)"
+    (dndLinked)="onDraggableLinked($event)"
+    (dndMoved)="onDraggableMoved($event)"
+    (dndCanceled)="onDragCanceled($event)"
+    (dndEnd)="onDragEnd($event)">
+
+    <div class="card-body">
+      <!--if [dndHandle] is used inside dndDraggable drag can only start from the handle-->
+    <div *ngIf="draggable.handle"
+      dndHandle>HANDLE
+    </div>
+
+      draggable ({{draggable.effectAllowed}}) <span [hidden]="!draggable.disable">DISABLED</span>
+
+      <!--optionally select a child element as drag image-->
+      <!-- <div dndDragImageRef>DRAG_IMAGE</div> -->
+    </div>
+</div>
