@@ -9,6 +9,7 @@ import { DesignerPanelComponent } from './formdesigner/designer-panel/designer-p
 import { FieldOptionsPanelComponent } from './formdesigner/field-options-panel/field-options-panel.component';
 import { CommonModule } from '@angular/common';
 import { DndModule } from 'ngx-drag-drop';
+import { DragulaModule } from 'ng2-dragula';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,9 @@ import { DndModule } from 'ngx-drag-drop';
     BrowserModule,
     AppRoutingModule,
     CommonModule,
-    DndModule
+    DndModule,
+
+    DragulaModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

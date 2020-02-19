@@ -1,35 +1,23 @@
-<!-- <div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <div class="card" *ngFor="let fieldType of fieldTypes">
-      <div class="card-body">
-        {{ fieldType.label }}
-      </div>
-    </div>
-  </div>
-</div> -->
-
-<!--a draggable element-->
-<div class="card"
-    [dndDraggable]="draggable.data"
+<div class="card mb-2" *ngFor="let fieldType of fieldTypes"
+    [dndDraggable]="fieldType.fieldTypeID"
     [dndEffectAllowed]="draggable.effectAllowed"
     [dndDisableIf]="draggable.disable"
     (dndStart)="onDragStart($event)"
-    (dndCopied)="onDraggableCopied($event)"
+    (dndCopied)="onDraggableCopied($event, fieldType.fieldTypeID)"
     (dndLinked)="onDraggableLinked($event)"
     (dndMoved)="onDraggableMoved($event)"
     (dndCanceled)="onDragCanceled($event)"
     (dndEnd)="onDragEnd($event)">
 
     <div class="card-body">
-      <!--if [dndHandle] is used inside dndDraggable drag can only start from the handle-->
-    <div *ngIf="draggable.handle"
-      dndHandle>HANDLE
-    </div>
-
-      draggable ({{draggable.effectAllowed}}) <span [hidden]="!draggable.disable">DISABLED</span>
-
-      <!--optionally select a child element as drag image-->
-      <!-- <div dndDragImageRef>DRAG_IMAGE</div> -->
+        {{ fieldType.label }}
     </div>
 </div>
+
+<!-- <div id="field-types-panel" dragula="FORMDESIGNER" [(dragulaModel)]="field-types-panel" style="min-height: 100px; padding: 2px; border: solid 1px black;">
+    <div class="card" *ngFor="let fieldType of fieldTypes">
+        <div class="card-body" >
+            {{ fieldType.label }}
+        </div>
+    </div>
+</div> -->

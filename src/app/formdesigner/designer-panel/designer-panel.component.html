@@ -1,14 +1,56 @@
-<div style="border: solid 1px black; min-height: 500px;"
-    dndDropzone
-    (dndDragover)="onDragover($event)"
-    (dndDrop)="onDrop($event)">
-    
-    dropzone 
-    <!--optional placeholder element for dropzone-->
-    <!--will be removed from DOM on init-->
-    <div style="border: 1px orangered solid; border-radius: 5px; padding: 15px;"
-         dndPlaceholderRef>
-        placeholder
-    </div>
+<div class="card" style="min-height: 500px;">
+    <div class="card-body"
+        dndDropzone
+        (dndDragover)="onDragover($event)"
+        (dndDrop)="onDrop($event)">
+        
+        dropzone 
+        <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
+            dndPlaceholderRef>
+        </div>
+        <div class="card mb-2" *ngFor="let formField of formFields"
+            [dndDraggable]="formField.formFieldID"
+            [dndEffectAllowed]="'move'"
+            [dndDisableIf]="draggable.disable"
+            (dndStart)="onDragStart($event)"
+            (dndMoved)="onDraggableMoved($event)"
+            (dndCanceled)="onDragCancelled($event)"
+            (dndEnd)="onDragEnd($event)">
 
+            <div class="card-body">
+                {{ formField.fieldType.label }}
+            </div>
+        </div>
+
+    </div>
+    <!-- <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body"
+                    dndDropzone
+                    (dndDragover)="onDragover($event)"
+                    (dndDrop)="onDrop($event)">
+                    
+                    dropzone 
+                    <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
+                        dndPlaceholderRef>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body"
+                    dndDropzone
+                    (dndDragover)="onDragover($event)"
+                    (dndDrop)="onDrop($event)">
+                    
+                    dropzone 
+                    <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
+                        dndPlaceholderRef>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
 </div>
