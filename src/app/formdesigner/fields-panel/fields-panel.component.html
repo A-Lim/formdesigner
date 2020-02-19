@@ -1,13 +1,7 @@
 <div class="card mb-2" *ngFor="let fieldType of fieldTypes"
     [dndDraggable]="fieldType.fieldTypeID"
-    [dndEffectAllowed]="draggable.effectAllowed"
-    [dndDisableIf]="draggable.disable"
-    (dndStart)="onDragStart($event)"
-    (dndCopied)="onDraggableCopied($event, fieldType.fieldTypeID)"
-    (dndLinked)="onDraggableLinked($event)"
-    (dndMoved)="onDraggableMoved($event)"
-    (dndCanceled)="onDragCanceled($event)"
-    (dndEnd)="onDragEnd($event)">
+    [dndEffectAllowed]="'copy'"
+    (dndCopied)="onDraggableCopied($event, fieldType.fieldTypeID)">
 
     <div class="card-body">
         {{ fieldType.label }}

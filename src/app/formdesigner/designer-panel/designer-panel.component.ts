@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormDesignerService } from '../formdesigner.service';
 
 import { DndDropEvent } from 'ngx-drag-drop';
 import { FormField, EffectAllowed } from '../fieldtype.model';
+import { Subscription, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-designer-panel',
   templateUrl: './designer-panel.component.html',
   styleUrls: ['./designer-panel.component.css']
 })
-export class DesignerPanelComponent implements OnInit {
-  public formFields: FormField[];
+export class DesignerPanelComponent implements OnInit, OnDestroy {
+  public formFields$: Observable<FormField[]>;
+  public selectedFormFieldSub: Subscription;
+  public selectedFormField: FormField;
 
   draggable = {
     // note that data is handled with JSON.stringify/JSON.parse
@@ -25,15 +28,13 @@ export class DesignerPanelComponent implements OnInit {
 
   ngOnInit() {
     this.formDesignService.retrieveFormFields();
-    this.formDesignService.formFields$.subscribe(formFields => {
-      this.formFields = formFields;
-      console.log("subscribe");
-    })
-    // this.formDesignService.getFormFields().subscribe(formFields => {
-    //   this.formFields = formFields;
-    // });
+    this.formFields$ = this.formDesignService.formFields$;
 
-    // console.log(this.formDesignService.getFormFields().)
+    // keep track of which form field is selected
+    // console.log(this.formDesignService.selectedFormField$);
+    this.selectedFormFieldSub = this.formDesignService.selectedFormField$.subscribe(formField => {
+      this.selectedFormField = formField;
+    });
   }
 
   onDragStart(event:DragEvent) {
@@ -61,26 +62,28 @@ export class DesignerPanelComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent) {
-    console.log(this.formFields);
+    // console.log(this.formFields);
     switch (event.dropEffect) {
       case EffectAllowed.Copy:
         this.formDesignService.addField(event.data, event.index);
         break;
 
       case EffectAllowed.Move:
-        console.log("Move");
-        console.log(event);
-        // this.formDesignService.addField(event.data, event.index);
         this.formDesignService.moveField(event.data, event.index);
         break;
 
       default:
         break;
     }
-    // console.log("DROPPED");
-    // console.log(event);
-    // this.formDesignService.addField(event.data);
-    console.log(this.formFields);
+  }
+
+  onFormFieldFocus(formFieldID: number) {
+    this.formDesignService.setSelectedFormField(formFieldID);
+    console.log(this.selectedFormField);
   }
   
+  ngOnDestroy() {
+    // this.formDesignService.formFields$;
+    // this.formFieldsSubscription.unsubscribe();
+  }
 }

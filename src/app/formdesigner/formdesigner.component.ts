@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DragulaService } from 'ng2-dragula';
+// import { DragulaService } from 'ng2-dragula';
 import { FieldType } from './fieldtype.model';
 
 @Component({
