@@ -1,1 +1,65 @@
-<p>field-options-panel works!</p>
+<div class="card mb-2">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <input type="text" class="form-control" placeholder="Search Field Code" 
+                    [(ngModel)]="searchStr" 
+                    (blur)="onSearchFieldBlur()"
+                    (ngModelChange)="onSearchFieldChange($event)" />
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="selectedFormField" class="card">
+    <div class="card-body">
+        <h4 class="card-title">Field Properties</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Field Type: </label> {{ selectedFormField.fieldType.fieldTypeName }}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="fieldCode">Field Code *</label>
+                    <input type="text" class="form-control input-sm" [(ngModel)]="selectedFormField.fieldCode" />
+                </div>
+            </div>
+            <div *ngIf="selectedFormField.zoneProperties" class="col-md-12">
+                <div class="form-group">
+                    <label for="fieldCode">Number of Columns *</label>
+                    <input type="number" class="form-control input-sm" [(ngModel)]="selectedFormField.zoneProperties.columns" />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary">Edit Field Properties</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!selectedFormField" class="card">
+    <div class="card-body">
+        <h4 class="card-title">Form Properties</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="formName">Form Name *</label>
+                    <input type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="formName">Form Type *</label>
+                    <input type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="formName">Reference No. Prefix *</label>
+                    <input type="text" class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

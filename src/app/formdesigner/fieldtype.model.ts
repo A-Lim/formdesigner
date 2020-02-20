@@ -14,7 +14,26 @@ export enum FieldTypeCategory {
 
 export class FormField {
     formFieldID: number;
+    fieldCode: string;
     fieldType: FieldType;
+    parentID: number;
+    column: number;
+    zoneProperties?: ZoneProperties;
+
+    constructor(formFieldID: number, fieldCode: string, 
+        fieldType: FieldType, parentID?: number, column?: number, 
+        zoneProperties?: ZoneProperties) {
+
+        this.formFieldID = formFieldID;
+        this.fieldCode = fieldCode;
+        this.fieldType = fieldType;
+        this.parentID = parentID;
+        this.column = column;
+        this.zoneProperties = zoneProperties;
+
+        if (this.fieldType.fieldTypeID === 4 && this.zoneProperties == null)
+            this.zoneProperties = new ZoneProperties();
+    }
 }
 
 export enum EffectAllowed {
@@ -26,4 +45,12 @@ export enum EffectAllowed {
     CopyLink = 'copyLink',
     LinkMove = 'linkMove',
     All = 'all'
+}
+
+class ZoneProperties {
+    public columns: number;
+
+    constructor() {
+        this.columns = 2;
+    }
 }

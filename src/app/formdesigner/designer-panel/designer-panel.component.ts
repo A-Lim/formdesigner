@@ -3,7 +3,8 @@ import { FormDesignerService } from '../formdesigner.service';
 
 import { DndDropEvent } from 'ngx-drag-drop';
 import { FormField, EffectAllowed } from '../fieldtype.model';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { takeUntil, filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-designer-panel',
@@ -11,58 +12,47 @@ import { Subscription, Observable } from 'rxjs';
   styleUrls: ['./designer-panel.component.css']
 })
 export class DesignerPanelComponent implements OnInit, OnDestroy {
-  public formFields$: Observable<FormField[]>;
-  public selectedFormFieldSub: Subscription;
+  // public formFields$: Observable<FormField[]>;
+  public parentFormFields: FormField[];
+  public searchFormField$: Observable<string>;
+
+  public searchStr: string;
   public selectedFormField: FormField;
 
-  draggable = {
-    // note that data is handled with JSON.stringify/JSON.parse
-    // only set simple data or POJO's as methods will be lost 
-    data: "myDragData",
-    effectAllowed: "copy",
-    disable: false,
-    handle: false
-  };
+  private _unsubscribe$ = new Subject<void>();
 
   constructor(private formDesignService: FormDesignerService) { }
 
   ngOnInit() {
     this.formDesignService.retrieveFormFields();
-    this.formFields$ = this.formDesignService.formFields$;
+    
+    // keep track of all form fields
+    this.formDesignService.formFields$
+      .pipe(
+        takeUntil(this._unsubscribe$),
+        // only get non-parent form fields
+        map(x => x.filter(y => y.parentID == null))
+      )
+      .subscribe(formFields => {
+        this.parentFormFields = formFields;
+      });
 
     // keep track of which form field is selected
-    // console.log(this.formDesignService.selectedFormField$);
-    this.selectedFormFieldSub = this.formDesignService.selectedFormField$.subscribe(formField => {
-      this.selectedFormField = formField;
-    });
-  }
+    this.formDesignService.selectedFormField$
+      .pipe(takeUntil(this._unsubscribe$))
+      .subscribe(formField => {
+        this.selectedFormField = formField;
+      });
 
-  onDragStart(event:DragEvent) {
-
-    // console.log("drag started", JSON.stringify(event, null, 2));
-  }
-  
-  onDragEnd(event:DragEvent) {
-    
-    // console.log("drag ended", JSON.stringify(event, null, 2));
-  }
-
-  onDraggableMoved(event:DragEvent) {
-    
-    // console.log("draggable moved", JSON.stringify(event, null, 2));
-  }
-
-  onDragCancelled(event:DragEvent) {
-    
-    // console.log("draggable moved", JSON.stringify(event, null, 2));
-  }
-
-  onDragover(event: DragEvent) {
-    // console.log("dragover", JSON.stringify(event, null, 2));
+    // keep track search string
+    this.formDesignService.search$
+      .pipe(takeUntil(this._unsubscribe$))
+      .subscribe(searchStr => {
+        this.searchStr = searchStr;
+      });
   }
 
   onDrop(event: DndDropEvent) {
-    // console.log(this.formFields);
     switch (event.dropEffect) {
       case EffectAllowed.Copy:
         this.formDesignService.addField(event.data, event.index);
@@ -77,13 +67,22 @@ export class DesignerPanelComponent implements OnInit, OnDestroy {
     }
   }
 
+  onFormFocus() {
+    this.formDesignService.setSelectedFormField(null);
+  }
+
   onFormFieldFocus(formFieldID: number) {
+    this.resetSearch();
     this.formDesignService.setSelectedFormField(formFieldID);
-    console.log(this.selectedFormField);
+  }
+
+  private resetSearch() {
+    this.searchStr = null;
+    this.formDesignService.searchField(null);
   }
   
   ngOnDestroy() {
-    // this.formDesignService.formFields$;
-    // this.formFieldsSubscription.unsubscribe();
+    this._unsubscribe$.next();
+    this._unsubscribe$.complete();
   }
 }

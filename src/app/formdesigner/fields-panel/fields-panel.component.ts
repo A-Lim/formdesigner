@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormDesignerService } from '../formdesigner.service';
 import { FieldType } from '../fieldtype.model';
 import { DndDropEvent } from 'ngx-drag-drop';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-fields-panel',
@@ -9,7 +10,8 @@ import { DndDropEvent } from 'ngx-drag-drop';
   styleUrls: ['./fields-panel.component.css']
 })
 export class FieldsPanelComponent implements OnInit {
-  public fieldTypes: FieldType[];
+  // public fieldTypes: FieldType[];
+  public fieldTypes$: Observable<FieldType[]>;
   
   draggable = {
     // note that data is handled with JSON.stringify/JSON.parse
@@ -23,24 +25,15 @@ export class FieldsPanelComponent implements OnInit {
 
   constructor(private formDesignService: FormDesignerService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.formDesignService.retrieveFieldTypes();
-    this.formDesignService.fieldTypes$.subscribe(fieldTypes => {
-      this.fieldTypes = fieldTypes;
-    });
-    // this.formDesignService.getFieldTypes().subscribe(fieldTypes => {
-    //   this.fieldTypes = fieldTypes;
-    // });
+    this.fieldTypes$ = this.formDesignService.fieldTypes$;
   }
 
-  onDragStart(event:DragEvent) {
-
-    // console.log("drag started", JSON.stringify(event, null, 2));
+  onDragStart(event:DragEvent, fieldType: FieldType) {
   }
   
   onDragEnd(event:DragEvent) {
-    
-    // console.log("drag ended", JSON.stringify(event, null, 2));
   }
   
   onDraggableCopied(event:DragEvent, fieldTypeID: number) {
