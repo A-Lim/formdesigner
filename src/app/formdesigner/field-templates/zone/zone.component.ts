@@ -48,6 +48,7 @@ export class ZoneComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribe$))
       .subscribe(formField => {
         this.selectedFormField = formField;
+        console.log(formField);
       });
 
     this.formDesignService.search$
@@ -86,7 +87,9 @@ export class ZoneComponent implements OnInit {
     this.formDesignService.setSelectedFormField(null);
   }
 
-  onFormFieldFocus(formFieldID: number) {
+  onFormFieldFocus(formFieldID: number, event: MouseEvent) {
+    // to prevent triggering parent click event
+    event.stopPropagation();
     this.resetSearch();
     this.formDesignService.setSelectedFormField(formFieldID);
   }

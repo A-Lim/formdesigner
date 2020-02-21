@@ -15,6 +15,7 @@
 
                             <ng-container *ngFor="let formField of formFields">
                                 <ng-container *ngIf="i === formField.column">
+                                    {{ selectedFormField | json }}
                                     <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
                                         <!-- zone -->
                                         <app-zone *ngSwitchCase="4"
@@ -24,9 +25,9 @@
                                                 'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
                                                 'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
                                             }"
-                                            (click)="onFormFieldFocus(formField.formFieldID)"
+                                            (click)="onFormFieldFocus(formField.formFieldID, $event)"
                                             [dndDraggable]="formField.formFieldID"
-                                            [dndEffectAllowed]="'move'">
+                                            [dndEffectAllowed]="'move'">{{ formField.formFieldID }}
                                         </app-zone>
                         
                                         <!-- default -->
@@ -36,7 +37,7 @@
                                                 'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
                                                 'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
                                             }"
-                                            (click)="onFormFieldFocus(formField.formFieldID)"
+                                            (click)="onFormFieldFocus(formField.formFieldID, $event)"
                                             [dndDraggable]="formField.formFieldID"
                                             [dndEffectAllowed]="'move'">
                         

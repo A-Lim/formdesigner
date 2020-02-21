@@ -35,22 +35,37 @@ export class FormDesignerService {
     }
 
     retrieveFormFields() {
-        const currentFormFields = this._formFieldsSubject.getValue();
-        const formFieldID = currentFormFields !== null ? currentFormFields.length + 1 : 1;
-        // call http request
-        const formfields = [
-            new FormField(
-                formFieldID,
-                "Heading1",
-                { 
-                    fieldTypeID: 1, 
-                    fieldTypeName: "Heading", 
-                    fieldTypeCategory: FieldTypeCategory.Layout, 
-                    label: "Heading", seqNo: 1 
-                } as FieldType 
-            )
-        ];
+        // const currentFormFields = this._formFieldsSubject.getValue();
+        // const formFieldID = currentFormFields !== null ? currentFormFields.length + 1 : 1;
 
+        const newFormField = new FormField(
+            1, "Heading1", 1,
+            { 
+                fieldTypeID: 1, 
+                fieldTypeName: "Heading", 
+                fieldTypeCategory: FieldTypeCategory.Layout, 
+                label: "Heading", seqNo: 1 
+            } as FieldType
+        );
+
+        // call http request
+        let formfields = [newFormField];
+
+        // for (let i = 1; i < 1000; i++) {
+        //     formfields.push(
+        //         new FormField(
+        //             i+1,
+        //             "Heading"+(i+1),
+        //             i+1,
+        //             { 
+        //                 fieldTypeID: 1, 
+        //                 fieldTypeName: "Heading", 
+        //                 fieldTypeCategory: FieldTypeCategory.Layout, 
+        //                 label: "Heading", seqNo: 1 
+        //             } as FieldType
+        //         )
+        //     );
+        // }
         this._formFieldsSubject.next(formfields);
     }
 
@@ -61,17 +76,14 @@ export class FormDesignerService {
         const formFieldID = currentFormFields !== null ? currentFormFields.length + 1 : 1;
 
         if (fieldType !== null) {
-            const formField = new FormField(formFieldID, fieldType.fieldTypeName + formFieldID, fieldType, parentID, column);
+            const formField = new FormField(formFieldID, fieldType.fieldTypeName + formFieldID, index + 1, fieldType, parentID, column);
             this._formFieldsSubject.getValue().splice(index, 0, formField);
 
-            console.log(formField);
+            // set newly added field as selected
+            this.setSelectedFormField(formField.formFieldID);
         }
         
         this._formFieldsSubject.next(this.getFormFields());
-    }
-
-    removeField(id: number) {
-
     }
 
     setSelectedFormField(formFieldID: number) {
@@ -81,32 +93,18 @@ export class FormDesignerService {
 
     moveField(formFieldID: number, toIndex: number, parentID?: number, column?: number) {
         let allFormFields = this.getFormFields();
+        const toBeMoved = allFormFields.find(x => x.formFieldID === formFieldID);
+        const remainingFormFields = allFormFields.filter(x => x.formFieldID !== formFieldID);
 
-        if (parentID != null && column != null) {
-            // get destination formfieldID
-            // const destFormField = allFormFields[toIndex];
-
-            allFormFields = allFormFields.filter(x => x.parentID === parentID && x.column === column);
-            
-            // get destination index after filter
-            // toIndex = allFormFields.findIndex(x => x.formFieldID == destFormField.formFieldID);
-        }
-
-        const toBeMoved = allFormFields.find(x => x.formFieldID == formFieldID);
-        const fromIndex = allFormFields.indexOf(toBeMoved);
-
-        console.log(fromIndex);
-        console.log(toIndex);
-
-        // no change in position causing sequence will still be the same
-        if (fromIndex + 1 === toIndex || fromIndex === toIndex) {
-            return;
-        }
-
-        allFormFields.splice(fromIndex, 1);
-        allFormFields.splice(toIndex, 0, toBeMoved);
-
-        this._formFieldsSubject.next(allFormFields);
+        const reorderedItems = [
+            ...remainingFormFields.slice(0, toIndex),
+            toBeMoved,
+            ...remainingFormFields.slice(toIndex)
+        ].map((formField, index) => {
+            formField.seqNo = index + 1;
+            return formField
+        });
+        this._formFieldsSubject.next(reorderedItems);
     }
 
     searchField(searchStr: string) {

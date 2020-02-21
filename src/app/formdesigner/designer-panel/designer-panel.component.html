@@ -21,7 +21,9 @@
                     }"
                     (click)="onFormFieldFocus(formField.formFieldID)"
                     [dndDraggable]="formField.formFieldID"
-                    [dndEffectAllowed]="'move'">
+                    [dndEffectAllowed]="'move'"
+                    
+                    >
                 </app-zone>
 
                 <!-- default -->
@@ -33,7 +35,8 @@
                     }"
                     (click)="onFormFieldFocus(formField.formFieldID)"
                     [dndDraggable]="formField.formFieldID"
-                    [dndEffectAllowed]="'move'">
+                    [dndEffectAllowed]="'move'"
+                    >
 
                     <div class="card-body">
                         {{ formField.fieldType.label }}

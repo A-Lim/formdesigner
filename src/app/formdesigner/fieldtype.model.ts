@@ -15,17 +15,19 @@ export enum FieldTypeCategory {
 export class FormField {
     formFieldID: number;
     fieldCode: string;
+    seqNo: number;
     fieldType: FieldType;
     parentID: number;
     column: number;
     zoneProperties?: ZoneProperties;
 
-    constructor(formFieldID: number, fieldCode: string, 
+    constructor(formFieldID: number, fieldCode: string, seqNo: number,
         fieldType: FieldType, parentID?: number, column?: number, 
         zoneProperties?: ZoneProperties) {
 
         this.formFieldID = formFieldID;
         this.fieldCode = fieldCode;
+        this.seqNo = seqNo;
         this.fieldType = fieldType;
         this.parentID = parentID;
         this.column = column;
