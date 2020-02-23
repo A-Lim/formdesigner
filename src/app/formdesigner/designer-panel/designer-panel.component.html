@@ -11,7 +11,7 @@
         dndDropzone
         (dndDrop)="onDrop($event)">
         dropzone 
-        <div>
+        <div [ngClass]="'scale-' + scale">
             <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
                 dndPlaceholderRef>
             </div>
