@@ -20,6 +20,7 @@ export class ZoneComponent implements OnInit {
   public formFields: FormField[];
   public searchStr: string;
   public selectedFormField: FormField;
+  public horizontal = true;
 
   private _unsubscribe$ = new Subject<void>();
 
@@ -40,6 +41,7 @@ export class ZoneComponent implements OnInit {
       )
       .subscribe(formFields => {
         this.formFields = formFields;
+        // console.log(formFields);
       });
 
 
@@ -48,7 +50,6 @@ export class ZoneComponent implements OnInit {
       .pipe(takeUntil(this._unsubscribe$))
       .subscribe(formField => {
         this.selectedFormField = formField;
-        console.log(formField);
       });
 
     this.formDesignService.search$
@@ -59,10 +60,13 @@ export class ZoneComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent, column: number) {
+    
     switch (event.dropEffect) {
       case EffectAllowed.Copy:
-        if (this.allowedFieldTypes.includes(event.data)) {
-          this.formDesignService.addField(event.data, event.index, this.formField.formFieldID, column);
+        const fieldType: FieldType = event.data;
+        // if type is allowed
+        if (this.allowedFieldTypes.includes(fieldType.fieldTypeID)) {
+          this.formDesignService.addField(fieldType, event.index, this.formField.formFieldID, column);
         } else {
           // prompt error
         }
@@ -70,8 +74,9 @@ export class ZoneComponent implements OnInit {
         break;
 
       case EffectAllowed.Move:
-        if (this.allowedFieldTypes.includes(event.data)) {
-          this.formDesignService.moveField(event.data, event.index, this.formField.formFieldID, column);
+        const formField: FormField = event.data;
+        if (this.allowedFieldTypes.includes(formField.fieldType.fieldTypeID)) {
+          this.formDesignService.moveField(formField, event.index, this.formField.formFieldID, column);
         } else {
           // prompt error
         }

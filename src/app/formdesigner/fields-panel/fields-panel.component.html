@@ -1,5 +1,5 @@
 <div class="card mb-2" *ngFor="let fieldType of fieldTypes$ | async"
-    [dndDraggable]="fieldType.fieldTypeID"
+    [dndDraggable]="fieldType"
     [dndEffectAllowed]="'copy'"
     (dndStart)="onDragStart($event, fieldType)"
     (dndCanceled)="onDragCanceled($event)"

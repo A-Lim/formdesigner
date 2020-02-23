@@ -33,8 +33,9 @@ export class FormField {
         this.column = column;
         this.zoneProperties = zoneProperties;
 
-        if (this.fieldType.fieldTypeID === 4 && this.zoneProperties == null)
+        if (this.fieldType.fieldTypeID === 4 && this.zoneProperties == null) {
             this.zoneProperties = new ZoneProperties();
+        }
     }
 }
 

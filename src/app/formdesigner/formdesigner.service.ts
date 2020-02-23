@@ -69,21 +69,18 @@ export class FormDesignerService {
         this._formFieldsSubject.next(formfields);
     }
 
-    addField(fieldTypeID: number, index: number, parentID?: number, column?: number) {
-        const fieldType = this._fieldTypesSubject.getValue().find(x => x.fieldTypeID === fieldTypeID);
+    addField(fieldType: FieldType, index: number, parentID?: number, column?: number) {
+        const allFormFields = this.getFormFields();
+        const formFieldID = allFormFields !== null ? allFormFields.length + 1 : 1;
 
-        const currentFormFields = this._formFieldsSubject.getValue();
-        const formFieldID = currentFormFields !== null ? currentFormFields.length + 1 : 1;
+        const formField = new FormField(formFieldID, fieldType.fieldTypeName + formFieldID, index + 1, fieldType, parentID, column);
+        allFormFields.splice(index, 0, formField);
 
-        if (fieldType !== null) {
-            const formField = new FormField(formFieldID, fieldType.fieldTypeName + formFieldID, index + 1, fieldType, parentID, column);
-            this._formFieldsSubject.getValue().splice(index, 0, formField);
+        const sortedFormFields = this.sortFormFields(allFormFields);
+        this._formFieldsSubject.next(sortedFormFields);
 
-            // set newly added field as selected
-            this.setSelectedFormField(formField.formFieldID);
-        }
-        
-        this._formFieldsSubject.next(this.getFormFields());
+        // set newly added field as selected
+        this.setSelectedFormField(formField.formFieldID);
     }
 
     setSelectedFormField(formFieldID: number) {
@@ -91,29 +88,53 @@ export class FormDesignerService {
         this._selectedFormFieldSubject.next(selectedField);
     }
 
-    moveField(formFieldID: number, toIndex: number, parentID?: number, column?: number) {
-        let allFormFields = this.getFormFields();
-        const toBeMoved = allFormFields.find(x => x.formFieldID === formFieldID);
-        const remainingFormFields = allFormFields.filter(x => x.formFieldID !== formFieldID);
+    moveField(formField: FormField, toIndex: number, parentID?: number, column?: number) {
+        const allFormFields = this.getFormFields();
 
-        const reorderedItems = [
+        allFormFields.map(function (cFormField) {
+            if (cFormField.formFieldID === formField.formFieldID) {
+                cFormField.parentID = parentID;
+                cFormField.column = column;
+            }
+            return cFormField;
+        });
+            
+        const toBeMoved = allFormFields.find(x => x.formFieldID === formField.formFieldID);
+        const remainingFormFields = allFormFields.filter(x => x.formFieldID !== formField.formFieldID);
+        
+        const newlyAddedFormFields = [
             ...remainingFormFields.slice(0, toIndex),
             toBeMoved,
             ...remainingFormFields.slice(toIndex)
-        ].map((formField, index) => {
-            formField.seqNo = index + 1;
-            return formField
-        });
-        this._formFieldsSubject.next(reorderedItems);
+        ];
+
+        const sortedFormFields = this.sortFormFields(newlyAddedFormFields);
+        this._formFieldsSubject.next(sortedFormFields);
     }
 
     searchField(searchStr: string) {
         this._searchSubject.next(searchStr);
     }
+
+    private sortFormFields(formFields: FormField[]) {
+        // add seqNo for non parented form fields
+        const nonParentedFormFields = formFields
+            .filter(x => x.parentID == null)
+            .map((x, index) => {
+                x.seqNo = index + 1;
+                return x;
+            });
+        
+        const parentedFormFields = formFields
+            .filter(x => x.parentID != null)
+            .sort((a, b) => {
+                return a.parentID - b.parentID || a.column - b.column ||  a.seqNo - b.seqNo;
+            });
+
+        return [...nonParentedFormFields, ...parentedFormFields];
+    }
     
-    // when calling subject.next()
-    // always return from getFormFields or getFieldTypes
-    // if not will return a direct reference
+    // get current copy of subject values
     private getFormFields() {
         return [...this._formFieldsSubject.getValue()];
     }

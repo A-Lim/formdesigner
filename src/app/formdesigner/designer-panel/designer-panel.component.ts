@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormDesignerService } from '../formdesigner.service';
 
 import { DndDropEvent } from 'ngx-drag-drop';
-import { FormField, EffectAllowed } from '../fieldtype.model';
+import { FormField, EffectAllowed, FieldType } from '../fieldtype.model';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { takeUntil, filter, map } from 'rxjs/operators';
 
@@ -18,6 +18,7 @@ export class DesignerPanelComponent implements OnInit, OnDestroy {
 
   public searchStr: string;
   public selectedFormField: FormField;
+  public scale = 100;
 
   private _unsubscribe$ = new Subject<void>();
 
@@ -69,13 +70,16 @@ export class DesignerPanelComponent implements OnInit, OnDestroy {
   // }
 
   onDrop(event: DndDropEvent) {
+    
     switch (event.dropEffect) {
       case EffectAllowed.Copy:
-        this.formDesignService.addField(event.data, event.index);
+        const fieldType: FieldType = event.data;
+        this.formDesignService.addField(fieldType, event.index);
         break;
 
       case EffectAllowed.Move:
-        this.formDesignService.moveField(event.data, event.index);
+        const formField: FormField = event.data;
+        this.formDesignService.moveField(formField, event.index);
         break;
 
       default:

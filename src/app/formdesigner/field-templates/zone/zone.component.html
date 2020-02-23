@@ -7,29 +7,15 @@
                     <div class="card col-md-{{ 12 / formField.zoneProperties.columns }}" style="min-height: 200px;">
                         <div class="card-body"
                             dndDropzone
-                            (dndDrop)="onDrop($event, i)">
+                            (dndDrop)="onDrop($event, i+1)">
 
                             <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
                                 dndPlaceholderRef>
                             </div>
 
                             <ng-container *ngFor="let formField of formFields">
-                                <ng-container *ngIf="i === formField.column">
-                                    {{ selectedFormField | json }}
+                                <ng-container *ngIf="i+1 === formField.column">
                                     <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
-                                        <!-- zone -->
-                                        <app-zone *ngSwitchCase="4"
-                                            [formField]=formField
-                                            class="card mb-2" 
-                                            [ngClass]="{ 
-                                                'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
-                                                'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
-                                            }"
-                                            (click)="onFormFieldFocus(formField.formFieldID, $event)"
-                                            [dndDraggable]="formField.formFieldID"
-                                            [dndEffectAllowed]="'move'">{{ formField.formFieldID }}
-                                        </app-zone>
-                        
                                         <!-- default -->
                                         <div *ngSwitchDefault
                                             class="card mb-2" 
@@ -38,8 +24,9 @@
                                                 'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
                                             }"
                                             (click)="onFormFieldFocus(formField.formFieldID, $event)"
-                                            [dndDraggable]="formField.formFieldID"
-                                            [dndEffectAllowed]="'move'">
+                                            [dndDraggable]="formField"
+                                            [dndEffectAllowed]="'move'"
+                                            [dndDraggingSourceClass]="'onDragged'">
                         
                                             <div class="card-body">
                                                 {{ formField.fieldType.label }}

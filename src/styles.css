@@ -1,28 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
 /* in-flight clone */
 .gu-mirror {
-    position: fixed !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    opacity: 0.8;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-    filter: alpha(opacity=80);
-    pointer-events: none;
-  }
-  /* high-performance display:none; helper */
-  .gu-hide {
-    left: -9999px !important;
-  }
-  /* added to mirrorContainer (default = body) while dragging */
-  .gu-unselectable {
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    user-select: none !important;
-  }
-  /* added to the source element while its mirror is dragged */
-  .gu-transit {
-    opacity: 0.2;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-    filter: alpha(opacity=20);
-  }
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+  pointer-events: none;
+}
+/* high-performance display:none; helper */
+.gu-hide {
+  left: -9999px !important;
+}
+/* added to mirrorContainer (default = body) while dragging */
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+/* added to the source element while its mirror is dragged */
+.gu-transit {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+}
+
+
+.selected-form-field { background-color: yellow; }
+.searched-form-field { background-color: lightgray !important; }
+
+.scale-100 { transform: scale(1); }
+.scale-80 { transform: scale(0.8); }
+.scale-50 { transform: scale(0.5); }
+.scale-30 { transform: scale(0.3); }
+
+/* .onDragged { visibility: hidden; } */
+
+/* 
+.searched-form-field {
+    -webkit-animation: blink-red 1s infinite; 
+    -moz-animation: blink-red 1s infinite; 
+    -o-animation: blink-red 1s infinite; 
+    animation: blink-red 1s infinite; 
+}
+  
+@keyframes blink-red {
+    0%, 49% {
+        background-color: inherit;
+    }
+    50%, 100% {
+        background-color: lightgray;
+    }
+} */
+

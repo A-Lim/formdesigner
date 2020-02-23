@@ -1,48 +1,57 @@
 <h4 (click)="onFormFocus()">Form</h4>
 
+<select [(ngModel)]="scale" class="">
+    <option>100</option>
+    <option>80</option>
+    <option>50</option>
+    <option>30</option>
+</select>
 <div class="card" style="min-height: 500px;">
     <div class="card-body"
         dndDropzone
         (dndDrop)="onDrop($event)">
         dropzone 
-        <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
-            dndPlaceholderRef>
-        </div>
+        <div>
+            <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
+                dndPlaceholderRef>
+            </div>
 
-        <ng-container *ngFor="let formField of parentFormFields">
-            <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
-                <!-- zone -->
-                <app-zone *ngSwitchCase="4"
-                    [formField]=formField
-                    class="card mb-2" 
-                    [ngClass]="{ 
-                        'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
-                        'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
-                    }"
-                    (click)="onFormFieldFocus(formField.formFieldID)"
-                    [dndDraggable]="formField.formFieldID"
-                    [dndEffectAllowed]="'move'"
-                    
-                    >
-                </app-zone>
+            <ng-container *ngFor="let formField of parentFormFields">
+                <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
+                    <!-- zone -->
+                    <app-zone *ngSwitchCase="4"
+                        [formField]=formField
+                        class="card mb-2" 
+                        [ngClass]="{ 
+                            'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
+                            'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                        }"
+                        (click)="onFormFieldFocus(formField.formFieldID)"
+                        [dndDraggable]="formField"
+                        [dndEffectAllowed]="'move'"
+                        [dndDraggingSourceClass]="'onDragged'"
+                        >
+                    </app-zone>
 
-                <!-- default -->
-                <div *ngSwitchDefault
-                    class="card mb-2" 
-                    [ngClass]="{ 
-                        'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
-                        'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
-                    }"
-                    (click)="onFormFieldFocus(formField.formFieldID)"
-                    [dndDraggable]="formField.formFieldID"
-                    [dndEffectAllowed]="'move'"
-                    >
+                    <!-- default -->
+                    <div *ngSwitchDefault
+                        class="card mb-2" 
+                        [ngClass]="{ 
+                            'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
+                            'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                        }"
+                        (click)="onFormFieldFocus(formField.formFieldID)"
+                        [dndDraggable]="formField"
+                        [dndEffectAllowed]="'move'"
+                        [dndDraggingSourceClass]="'onDragged'"
+                        >
 
-                    <div class="card-body">
-                        {{ formField.fieldType.label }}
+                        <div class="card-body">
+                            {{ formField.fieldType.label }}
+                        </div>
                     </div>
-                </div>
+                </ng-container>
             </ng-container>
-        </ng-container>
+        </div>
     </div>
 </div>
