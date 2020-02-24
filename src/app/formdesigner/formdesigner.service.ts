@@ -75,14 +75,14 @@ export class FormDesignerService {
 
         const newFormField = new FormField(formFieldID, fieldType.fieldTypeName + formFieldID, index + 1, fieldType, parentID, column);
 
-        if (parentID != null && column != null) {
-            allFormFields.forEach(function (formField) {
-                if (formField.formFieldID === parentID)
-                    formField.childFormFields.splice(index, 0, newFormField);
-            });
-        } else {
+        // if (parentID != null && column != null) {
+        //     allFormFields.forEach(function (formField) {
+        //         if (formField.formFieldID === parentID)
+        //             formField.childFormFields.splice(index, 0, newFormField);
+        //     });
+        // } else {
             allFormFields.splice(index, 0, newFormField);
-        }
+        // }
         
         const updatedFormFields = this.updateSeqNo(allFormFields);
         this._formFieldsSubject.next(updatedFormFields);
@@ -106,52 +106,27 @@ export class FormDesignerService {
 
     moveField(formField: FormField, toIndex: number, parentID?: number, column?: number) {
         let allFormFields = this.getFormFields();
-
-        // if (formField.parentID != null) {
-        //     allFormFields = allFormFields.map(function (formField) {
-        //         if (formField.formFieldID == parentID) {
-        //             formField.childFormFields.forEach(function y)
-        //         }
-        //         return formField;
-        //     });
-        //     // const currentParentFormField = allFormFields.find(x => x.formFieldID === formField.parentID);
-        //     // const currentChildFormField = 
-        //     // allFormFields = parentFormField.childFormFields;
-        // }
-
-        // console.log(allFormFields);
         const fromIndex = allFormFields.findIndex(x => x.formFieldID === formField.formFieldID);
         if (fromIndex < toIndex) {
             toIndex -= 1;
         }
-        console.log(fromIndex);
-        console.log(toIndex);
-        // console.log("----------ALL------------");
-        // console.log(allFormFields);
-        // console.log("MOVED");
-        // console.log(formField);
-
-        // allFormFields.map(function (cFormField) {
-        //     if (cFormField.formFieldID === formField.formFieldID) {
-        //         cFormField.parentID = parentID;
-        //         cFormField.column = column;
-        //     }
-        //     return cFormField;
-        // });
             
         const toBeMoved = allFormFields.find(x => x.formFieldID === formField.formFieldID);
+        toBeMoved.parentID = parentID;
+        toBeMoved.column = column;
+        toBeMoved.seqNo = toIndex + 1;
+
         const remainingFormFields = allFormFields.filter(x => x.formFieldID !== formField.formFieldID);
-        // console.log("----------------------");
-        // console.log(...remainingFormFields.slice(0, toIndex));
-        // console.log("----------------------");
-        // console.log(toBeMoved);
-        // console.log("----------------------");
-        // console.log(...remainingFormFields.slice(toIndex));
+
         const movedFormFields = [
             ...remainingFormFields.slice(0, toIndex),
             toBeMoved,
             ...remainingFormFields.slice(toIndex)
         ];
+
+        
+
+
         // console.log(movedFormFields);
         const sortedFormFields = this.updateSeqNo(movedFormFields);
         console.log(sortedFormFields);
@@ -163,46 +138,28 @@ export class FormDesignerService {
     }
 
     private updateSeqNo(formFields: FormField[]) {
-        return formFields.map((x, xIndex) => {
-            x.seqNo = xIndex + 1;
-            if (x.childFormFields?.length > 0 && x.zoneProperties != null) {
+        return formFields.sort((a,b) => { return a.parentID - b.parentID || a.column - b.column || a.seqNo - b.seqNo })
+        // return formFields.map((x, xIndex) => {
+        //     x.seqNo = xIndex + 1;
+        //     if (x.childFormFields?.length > 0 && x.zoneProperties != null) {
 
-                x.childFormFields = x.childFormFields
-                    .sort((a,b) => a.column - b.column || a.seqNo - b.seqNo);
+        //         x.childFormFields = x.childFormFields
+        //             .sort((a,b) => a.column - b.column || a.seqNo - b.seqNo);
 
-                for (let i = 1; i < x.zoneProperties.columns + 1; i++) {
-                    x.childFormFields.filter(x => x.column === i)
-                        .map((y, yIndex) => {
-                            y.seqNo = yIndex + 1;
-                            return y;
-                        });
-                }
+        //         for (let i = 1; i < x.zoneProperties.columns + 1; i++) {
+        //             x.childFormFields.filter(x => x.column === i)
+        //                 .map((y, yIndex) => {
+        //                     y.seqNo = yIndex + 1;
+        //                     return y;
+        //                 });
+        //         }
 
-                // x.childFormFields = x.childFormFields
-                //     .sort((a,b) => a.column - b.column || a.seqNo - b.seqNo);
-            }
+        //         // x.childFormFields = x.childFormFields
+        //         //     .sort((a,b) => a.column - b.column || a.seqNo - b.seqNo);
+        //     }
             
-            return x;
-        });
-        // return formFields.sort((a, b) => {
-        //     return a.parentID - b.parentID || a.column - b.column ||  a.seqNo - b.seqNo;
+        //     return x;
         // });
-        // add seqNo for non parented form fields
-        // const nonParentedFormFields = formFields
-        //     .filter(x => x.parentID == null)
-        //     .map((x, index) => {
-        //         x.seqNo = index + 1;
-        //         return x;
-        //     });
-        
-        // const parentedFormFields = formFields
-        //     .filter(x => x.parentID != null)
-        //     .sort((a, b) => {
-        //         return a.parentID - b.parentID || a.column - b.column ||  a.seqNo - b.seqNo;
-        //     });
-        // return [...nonParentedFormFields, ...parentedFormFields];
-
-        // return formFields;
     }
     
     // get current copy of subject values
