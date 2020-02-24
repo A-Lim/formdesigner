@@ -8,12 +8,11 @@
                         <div class="card-body"
                             dndDropzone
                             (dndDrop)="onDrop($event, i+1)">
-
                             <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
                                 dndPlaceholderRef>
                             </div>
 
-                            <ng-container *ngFor="let formField of formFields">
+                            <ng-container *ngFor="let formField of formField.childFormFields">
                                 <ng-container *ngIf="i+1 === formField.column">
                                     <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
                                         <!-- default -->
@@ -34,11 +33,7 @@
                                         </div>
                                     </ng-container>
                                 </ng-container>
-                                
                             </ng-container>
-
-
-
                         </div>
                     </div>
                 </ng-container>

@@ -19,6 +19,7 @@ export class FormField {
     fieldType: FieldType;
     parentID: number;
     column: number;
+    childFormFields: FormField[];
     zoneProperties?: ZoneProperties;
 
     constructor(formFieldID: number, fieldCode: string, seqNo: number,
@@ -34,6 +35,7 @@ export class FormField {
         this.zoneProperties = zoneProperties;
 
         if (this.fieldType.fieldTypeID === 4 && this.zoneProperties == null) {
+            this.childFormFields = new Array();
             this.zoneProperties = new ZoneProperties();
         }
     }

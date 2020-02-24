@@ -17,7 +17,7 @@ export class ZoneComponent implements OnInit {
   public arr: Array<number>;
 
   // public formFields$: Observable<FormField[]>;
-  public formFields: FormField[];
+  // public formFields: FormField[];
   public searchStr: string;
   public selectedFormField: FormField;
   public horizontal = true;
@@ -33,16 +33,16 @@ export class ZoneComponent implements OnInit {
 
   ngOnInit() {
     // keep track of all form fields
-    this.formDesignService.formFields$
-      .pipe(
-        takeUntil(this._unsubscribe$),
-        // only child field
-        map(x => x.filter(y => y.parentID == this.formField.formFieldID))
-      )
-      .subscribe(formFields => {
-        this.formFields = formFields;
-        // console.log(formFields);
-      });
+    // this.formDesignService.formFields$
+    //   .pipe(
+    //     takeUntil(this._unsubscribe$),
+    //     // only child field
+    //     map(x => x.filter(y => y.parentID == this.formField.formFieldID))
+    //   )
+    //   .subscribe(formFields => {
+    //     this.formFields = formFields;
+    //     // console.log(formFields);
+    //   });
 
 
     // keep track of which form field is selected
@@ -74,6 +74,7 @@ export class ZoneComponent implements OnInit {
         break;
 
       case EffectAllowed.Move:
+        console.log(event.index);
         const formField: FormField = event.data;
         if (this.allowedFieldTypes.includes(formField.fieldType.fieldTypeID)) {
           this.formDesignService.moveField(formField, event.index, this.formField.formFieldID, column);
@@ -96,7 +97,7 @@ export class ZoneComponent implements OnInit {
     // to prevent triggering parent click event
     event.stopPropagation();
     this.resetSearch();
-    this.formDesignService.setSelectedFormField(formFieldID);
+    this.formDesignService.setSelectedFormField(formFieldID, this.formField.formFieldID);
   }
 
   private resetSearch() {

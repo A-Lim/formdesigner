@@ -8,10 +8,11 @@
 </select>
 <div class="card" style="min-height: 500px;">
     <div class="card-body"
+        [ngClass]="'scale-' + scale"
         dndDropzone
         (dndDrop)="onDrop($event)">
         dropzone 
-        <div [ngClass]="'scale-' + scale">
+        <!-- <div [ngClass]="'scale-' + scale"> -->
             <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
                 dndPlaceholderRef>
             </div>
@@ -52,6 +53,6 @@
                     </div>
                 </ng-container>
             </ng-container>
-        </div>
+        <!-- </div> -->
     </div>
 </div>
