@@ -1,42 +1,40 @@
 <div class="card" style="min-height: 200px; background-color: inherit;">
     <div class="card-body">
         <div class="card-body">
-            {{ formField.fieldType.label }}
+            {{ formDesignDetail.fieldType.label }}
             <div class="row">
-                <ng-container *ngFor="let el of [].constructor(formField.zoneProperties.columns); let i = index">
-                    <div class="card col-md-{{ 12 / formField.zoneProperties.columns }}" style="min-height: 200px;">
+                <ng-container *ngFor="let subDesignDetails of formDesignDetail.subDesignDetails; let i = index;">
+                    <div class="card col-md-{{ 12 / formDesignDetail.subDesignDetails.length }}" style="min-height: 200px;">
                         <div class="card-body"
                             dndDropzone
-                            (dndDrop)="onDrop($event, i+1)">
+                            (dndDrop)="onDrop($event, i)">
                             <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
                                 dndPlaceholderRef>
                             </div>
-
-                            <ng-container *ngFor="let formField of formField.childFormFields">
-                                <ng-container *ngIf="i+1 === formField.column">
-                                    <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
-                                        <!-- default -->
-                                        <div *ngSwitchDefault
-                                            class="card mb-2" 
-                                            [ngClass]="{ 
-                                                'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
-                                                'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
-                                            }"
-                                            (click)="onFormFieldFocus(formField.formFieldID, $event)"
-                                            [dndDraggable]="formField"
-                                            [dndEffectAllowed]="'move'"
-                                            [dndDraggingSourceClass]="'onDragged'">
-                        
-                                            <div class="card-body">
-                                                {{ formField.fieldType.label }}
-                                            </div>
+                            <ng-container *ngFor="let subDesignDetail of subDesignDetails">
+                                <ng-container [ngSwitch]="subDesignDetail.fieldType.fieldTypeID" >
+                                    <div *ngSwitchDefault
+                                        class="card mb-2" 
+                                        [ngClass]="{ 
+                                            'selected-form-field': selectedFormDesignDetail?.fieldCode === subDesignDetail.fieldCode,
+                                            'searched-form-field': searchStr && subDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                                        }"
+                                        (click)="onFormDesignDetailFocus(subDesignDetail, $event)"
+                                        [dndDraggable]="subDesignDetail"
+                                        [dndEffectAllowed]="'move'"
+                                        [dndDraggingSourceClass]="'onDragged'">
+                    
+                                        <div class="card-body">
+                                            {{ subDesignDetail.fieldType.label }}
                                         </div>
-                                    </ng-container>
+                                    </div>
                                 </ng-container>
                             </ng-container>
+
                         </div>
                     </div>
                 </ng-container>
+
             </div>
         </div>
     </div>

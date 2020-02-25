@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormField, FieldType, EffectAllowed } from '../../fieldtype.model';
+import { FormDesignDetail, FieldType, EffectAllowed } from '../../fieldtype.model';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { Observable, Subject } from 'rxjs';
 import { FormDesignerService } from '../../formdesigner.service';
@@ -12,14 +12,12 @@ import { takeUntil, map } from 'rxjs/operators';
 })
 export class ZoneComponent implements OnInit {
   @Input()
-  public formField: FormField;
+  public formDesignDetail: FormDesignDetail;
   // used to loops
   public arr: Array<number>;
 
-  // public formFields$: Observable<FormField[]>;
-  // public formFields: FormField[];
   public searchStr: string;
-  public selectedFormField: FormField;
+  public selectedFormDesignDetail: FormDesignDetail;
   public horizontal = true;
 
   private _unsubscribe$ = new Subject<void>();
@@ -46,10 +44,10 @@ export class ZoneComponent implements OnInit {
 
 
     // keep track of which form field is selected
-    this.formDesignService.selectedFormField$
+    this.formDesignService.selectedFormDesignDetail$
       .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(formField => {
-        this.selectedFormField = formField;
+      .subscribe(formDesignDetail => {
+        this.selectedFormDesignDetail = formDesignDetail;
       });
 
     this.formDesignService.search$
@@ -66,7 +64,7 @@ export class ZoneComponent implements OnInit {
         const fieldType: FieldType = event.data;
         // if type is allowed
         if (this.allowedFieldTypes.includes(fieldType.fieldTypeID)) {
-          this.formDesignService.addField(fieldType, event.index, this.formField.formFieldID, column);
+          this.formDesignService.addFormDesignDetail(fieldType, event.index, this.formDesignDetail.fieldCode, column);
         } else {
           // prompt error
         }
@@ -74,10 +72,9 @@ export class ZoneComponent implements OnInit {
         break;
 
       case EffectAllowed.Move:
-        console.log(event.index);
-        const formField: FormField = event.data;
-        if (this.allowedFieldTypes.includes(formField.fieldType.fieldTypeID)) {
-          this.formDesignService.moveField(formField, event.index, this.formField.formFieldID, column);
+        const formDesignDetail: FormDesignDetail = event.data;
+        if (this.allowedFieldTypes.includes(formDesignDetail.fieldType.fieldTypeID)) {
+          this.formDesignService.moveFormDesignDetail(formDesignDetail, event.index, this.formDesignDetail.fieldCode, column);
         } else {
           // prompt error
         }
@@ -90,14 +87,14 @@ export class ZoneComponent implements OnInit {
   }
 
   onFormFocus() {
-    this.formDesignService.setSelectedFormField(null);
+    // this.formDesignService.setSelectedFormField(null);
   }
 
-  onFormFieldFocus(formFieldID: number, event: MouseEvent) {
+  onFormDesignDetailFocus(formDesignDetail: FormDesignDetail, event: MouseEvent) {
     // to prevent triggering parent click event
     event.stopPropagation();
     this.resetSearch();
-    this.formDesignService.setSelectedFormField(formFieldID, this.formField.formFieldID);
+    this.formDesignService.setSelectedFormDesignDetail(formDesignDetail);
   }
 
   private resetSearch() {

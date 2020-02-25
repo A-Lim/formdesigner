@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormDesignerService } from '../formdesigner.service';
 import { Subscription, Subject, Observable } from 'rxjs';
-import { FormField } from '../fieldtype.model';
+import { FormDesignDetail } from '../fieldtype.model';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -10,7 +10,7 @@ import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./field-options-panel.component.css']
 })
 export class FieldOptionsPanelComponent implements OnInit, OnDestroy {
-  public selectedFormField: FormField;
+  public selectedFormDesignDetail: FormDesignDetail;
   public searchStr: string;
   public searchField = new Subject<string>();
   // public search$: Observable<string>;
@@ -20,10 +20,10 @@ export class FieldOptionsPanelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // keep track of which form field is selected
-    this.formDesignService.selectedFormField$
+    this.formDesignService.selectedFormDesignDetail$
       .pipe(takeUntil(this._unsubscribe))
-      .subscribe(formField => {
-      this.selectedFormField = formField;
+      .subscribe(formDesignDetail => {
+      this.selectedFormDesignDetail = formDesignDetail;
     });
 
     // search

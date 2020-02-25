@@ -17,18 +17,18 @@
                 dndPlaceholderRef>
             </div>
 
-            <ng-container *ngFor="let formField of parentFormFields">
-                <ng-container [ngSwitch]="formField.fieldType.fieldTypeID" >
+            <ng-container *ngFor="let formDesignDetail of formDesignDetails">
+                <ng-container [ngSwitch]="formDesignDetail.fieldType.fieldTypeID" >
                     <!-- zone -->
                     <app-zone *ngSwitchCase="4"
-                        [formField]=formField
+                        [formDesignDetail]=formDesignDetail
                         class="card mb-2" 
                         [ngClass]="{ 
-                            'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
-                            'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                            'selected-form-field': selectedFormDesignDetail?.fieldCode == formDesignDetail.fieldCode,
+                            'searched-form-field': searchStr && formDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
                         }"
-                        (click)="onFormFieldFocus(formField.formFieldID)"
-                        [dndDraggable]="formField"
+                        (click)="onFormDesignDetailFocus(formDesignDetail)"
+                        [dndDraggable]="formDesignDetail"
                         [dndEffectAllowed]="'move'"
                         [dndDraggingSourceClass]="'onDragged'"
                         >
@@ -38,17 +38,16 @@
                     <div *ngSwitchDefault
                         class="card mb-2" 
                         [ngClass]="{ 
-                            'selected-form-field': selectedFormField?.formFieldID == formField.formFieldID,
-                            'searched-form-field': searchStr && formField.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                            'selected-form-field': selectedFormDesignDetail?.fieldCode == formDesignDetail.fieldCode,
+                            'searched-form-field': searchStr && formDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
                         }"
-                        (click)="onFormFieldFocus(formField.formFieldID)"
-                        [dndDraggable]="formField"
+                        (click)="onFormDesignDetailFocus(formDesignDetail)"
+                        [dndDraggable]="formDesignDetail"
                         [dndEffectAllowed]="'move'"
-                        [dndDraggingSourceClass]="'onDragged'"
-                        >
+                        [dndDraggingSourceClass]="'onDragged'">
 
                         <div class="card-body">
-                            {{ formField.fieldType.label }}
+                            {{ formDesignDetail.fieldType.label }}
                         </div>
                     </div>
                 </ng-container>

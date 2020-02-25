@@ -10,25 +10,25 @@
         </div>
     </div>
 </div>
-<div *ngIf="selectedFormField" class="card">
+<div *ngIf="selectedFormDesignDetail" class="card">
     <div class="card-body">
         <h4 class="card-title">Field Properties</h4>
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label>Field Type: </label> {{ selectedFormField.fieldType.fieldTypeName }}
+                    <label>Field Type: </label> {{ selectedFormDesignDetail.fieldType.fieldTypeName }}
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="fieldCode">Field Code *</label>
-                    <input type="text" class="form-control input-sm" [(ngModel)]="selectedFormField.fieldCode" />
+                    <input type="text" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.fieldCode" />
                 </div>
             </div>
-            <div *ngIf="selectedFormField.zoneProperties" class="col-md-12">
+            <div *ngIf="selectedFormDesignDetail.columns" class="col-md-12">
                 <div class="form-group">
                     <label for="fieldCode">Number of Columns *</label>
-                    <input type="number" class="form-control input-sm" [(ngModel)]="selectedFormField.zoneProperties.columns" />
+                    <input type="number" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.columns" />
                 </div>
             </div>
             <div class="col-md-12">
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<div *ngIf="!selectedFormField" class="card">
+<div *ngIf="!selectedFormDesignDetail" class="card">
     <div class="card-body">
         <h4 class="card-title">Form Properties</h4>
         <div class="row">
