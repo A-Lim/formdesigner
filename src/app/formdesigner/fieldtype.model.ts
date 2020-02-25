@@ -75,6 +75,14 @@ export class FormDesignDetail {
         // this.subDesignDetails[formDesignDetail]
     }
 
+    public addColumns() {
+        this.subDesignDetails.push([]);
+    }
+
+    removeColumns() {
+        this.subDesignDetails.pop();
+    }
+
     // formFieldID: number;
     // fieldCode: string;
     // seqNo: number;

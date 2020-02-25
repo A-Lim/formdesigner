@@ -12,6 +12,7 @@ import { FieldOptionsPanelComponent } from './formdesigner/field-options-panel/f
 
 import { DndModule } from 'ngx-drag-drop';
 import { ZoneComponent } from './formdesigner/field-templates/zone/zone.component';
+import { TableComponent } from './formdesigner/field-templates/table/table.component';
 // import { DragulaModule } from 'ng2-dragula';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ZoneComponent } from './formdesigner/field-templates/zone/zone.componen
     FieldsPanelComponent,
     DesignerPanelComponent,
     FieldOptionsPanelComponent,
-    ZoneComponent
+    ZoneComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,

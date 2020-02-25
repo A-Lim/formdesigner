@@ -28,7 +28,8 @@ export class FormDesignerService {
             { fieldTypeID: 1, fieldTypeName: "Heading", fieldTypeCategory: FieldTypeCategory.Layout, label: "Heading", seqNo: 1 } as FieldType,
             { fieldTypeID: 2, fieldTypeName: "Textbox", fieldTypeCategory: FieldTypeCategory.Item, label: "Textbox", seqNo: 2 } as FieldType,
             { fieldTypeID: 3, fieldTypeName: "TextArea", fieldTypeCategory: FieldTypeCategory.Item, label: "Textarea", seqNo: 3 } as FieldType,
-            { fieldTypeID: 4, fieldTypeName: "Zone", fieldTypeCategory: FieldTypeCategory.Layout, label: "Zone", seqNo: 4 } as FieldType
+            { fieldTypeID: 4, fieldTypeName: "Zone", fieldTypeCategory: FieldTypeCategory.Layout, label: "Zone", seqNo: 4 } as FieldType,
+            { fieldTypeID: 4, fieldTypeName: "Table", fieldTypeCategory: FieldTypeCategory.Layout, label: "Table", seqNo: 5 } as FieldType
         ];
 
         this._fieldTypesSubject.next(fieldTypes);
@@ -55,26 +56,12 @@ export class FormDesignerService {
         const allFormDesignDetails = this.getAllFormDesignDetails();
         const formDesignDetailID = this.getAllFormDesignDetails(true).length + 1;
         const newFieldCode = fieldType.label + formDesignDetailID;
-
         const newFormDesignDetail  = new FormDesignDetail(formDesignDetailID, fieldType, newFieldCode);
+        // add newFormDesignDetail to list
+        const updatedFormDesignDetails = this.addToList(allFormDesignDetails, newFormDesignDetail, index, parentFieldCode, column);
 
-        if (parentFieldCode != null && column != null) {
-            allFormDesignDetails.forEach(function (formDesignDetail) {
-                if (formDesignDetail.fieldCode === parentFieldCode) {
-                    formDesignDetail.addSubDesignDetails(newFormDesignDetail, index, column);
-                }
-                // if (formDesignDetail.form)
-            });
-            // allFormFields.forEach(function (formField) {
-            //     if (formField.formFieldID === parentID)
-            //         formField.addColumnFormField(newFormField, index, column);
-            // });
-        } else {
-            allFormDesignDetails.splice(index, 0, newFormDesignDetail);
-        }
-
-        // const updatedFormFields = this.updateSeqNo(allFormFields);
-        this._formDesignDetailsSubject.next(allFormDesignDetails);
+        const sortedFormDesignDetails = this.updateSeqNo(updatedFormDesignDetails);
+        this._formDesignDetailsSubject.next(sortedFormDesignDetails);
         // set newly added field as selected
         this.setSelectedFormDesignDetail(newFormDesignDetail);
     }
@@ -83,99 +70,43 @@ export class FormDesignerService {
         let allFormDesignDetails = this.getAllFormDesignDetails();
         let fromIndex = null;
 
-        // if (parentFieldCode == null) {
-            fromIndex = allFormDesignDetails.findIndex(x => x.formDesignDetailID === formDesignDetail.formDesignDetailID);
-            if (fromIndex < toIndex) {
-                toIndex -= 1;
-            }
-        // } else {
-        //     fromIndex
-        // }
+        // TODO
+        // moving from non-parent to parented (issue)
+        // moving from parent to non-parent 
+        // moving between different columns
+        fromIndex = this.findFormDesignDetailIndex(formDesignDetail);
+        // fromIndex = allFormDesignDetails.findIndex(x => x.formDesignDetailID === formDesignDetail.formDesignDetailID);
+        if (fromIndex < toIndex) {
+            toIndex -= 1;
+        }
 
-        
-        
-        // no change in position or sequence
-        // exit
-        // if (fromIndex === toIndex)
-        //     return;
-
+        console.log(fromIndex);
 
         const toBeMoved = formDesignDetail;
-        debugger;
         allFormDesignDetails = this.removeFromList(allFormDesignDetails, toBeMoved.fieldCode);
         allFormDesignDetails = this.addToList(allFormDesignDetails, formDesignDetail, toIndex, parentFieldCode, column);
-        debugger;
-        // allFormDesignDetails.filter(function (formDesignDetail) {
-        //     if (formDesignDetail.fieldCode !== toBeMoved.fieldCode) {
-        //         return formDesignDetail;
-        //     } else {
 
-        //     }
-        // });
-
-        // for (let i = 0; i < allFormDesignDetails.length; i++) {
-        //     if (allFormDesignDetails[i].fieldCode === toBeMoved.fieldCode) {
-        //         allFormDesignDetails.splice(i, 1);
-        //         console.log("BREAK");
-        //         break;
-        //     } else {
-        //         console.log("0");
-        //         if (allFormDesignDetails[i].subDesignDetails?.length > 0) {
-        //             const columnData = allFormDesignDetails[i].subDesignDetails;
-        //             console.log("1");
-        //             for (let j = 0; j < columnData.length; j++) {
-        //                 const subDesignDetails = columnData[j];
-        //                 console.log(subDesignDetails);
-        //                 for (let k = 0; k < subDesignDetails.length; k++) {
-        //                     if (subDesignDetails[k].fieldCode === toBeMoved.fieldCode) {
-        //                         console.log("OK");
-        //                         // remove
-        //                         allFormDesignDetails[i].subDesignDetails[j].splice(k, 1);
-        //                         break;
-        //                     }
-        //                 }
-        //             }
-
-        //         }
-        //     }
-        // }
-
-        // allFormDesignDetails.forEach(function (formDesignDetail, posIndex) {
-        //     if (formDesignDetail.fieldCode === toBeMoved.fieldCode) {
-                
-        //     }
-        // });
-
-        // find where it is 
-        // remove it 
-        // add it to new position
-
-        // if (parentFieldCode != null && column != null) {
-
-        // }
-
-        // const toBeMoved = allFormDesignDetails.find(x => x.formDesignDetailID === formDesignDetail.formDesignDetailID);
-        // toBeMoved.seqNo = toIndex + 1;
-
-        // const remainingFormFields = allFormDesignDetails.filter(x => x.formDesignDetailID !== formDesignDetail.formDesignDetailID);
-
-        // const movedFormFields = [
-        //     ...remainingFormFields.slice(0, toIndex),
-        //     toBeMoved,
-        //     ...remainingFormFields.slice(toIndex)
-        // ];
-
-        // const sortedFormFields = this.updateSeqNo(movedFormFields);
-        this._formDesignDetailsSubject.next(allFormDesignDetails);
+        const sortedFormFields = this.updateSeqNo(allFormDesignDetails);
+        this._formDesignDetailsSubject.next(sortedFormFields);
     }
 
+    setSelectedFormDesignDetail(formDesignDetail: FormDesignDetail): void {
+        this._selectedFormDesignDetailSubject.next(formDesignDetail);
+    }
+    
+
+    searchField(searchStr: string): void {
+        this._searchSubject.next(searchStr);
+    }
+
+    /************** PRIVATE METHODS **************/
     private addToList(formDesignDetails: FormDesignDetail[], newFormDesignDetail: FormDesignDetail, index: number, parentFieldCode?: string, column?: number) {
         if (parentFieldCode != null && column != null) {
             for (let i = 0; i < formDesignDetails.length; i++) {
                 if (formDesignDetails[i].fieldCode === parentFieldCode) {
                     formDesignDetails[i].addSubDesignDetails(newFormDesignDetail, index, column);
+                    break;
                 }
-                break;
             }
         } else {
             formDesignDetails.splice(index, 0, newFormDesignDetail);
@@ -187,6 +118,7 @@ export class FormDesignerService {
     // remove formDesignDetail where fieldCode is found
     // will iterate into nested fields as well
     private removeFromList(formDesignDetails: FormDesignDetail[], fieldCode: string): FormDesignDetail[] {
+        loop1:
         for (let i = 0; i < formDesignDetails.length; i++) {
             if (formDesignDetails[i].fieldCode === fieldCode) {
                 formDesignDetails.splice(i, 1);
@@ -195,14 +127,16 @@ export class FormDesignerService {
             } else {
                 if (formDesignDetails[i].subDesignDetails?.length > 0) {
                     const columnData = formDesignDetails[i].subDesignDetails;
+                    loop2:
                     for (let j = 0; j < columnData.length; j++) {
                         const subDesignDetails = columnData[j];
+                        loop3:
                         for (let k = 0; k < subDesignDetails.length; k++) {
                             if (subDesignDetails[k].fieldCode === fieldCode) {
                                 // remove
                                 formDesignDetails[i].subDesignDetails[j].splice(k, 1);
                                 // break for performance
-                                break;
+                                break loop1;
                             }
                         }
                     }
@@ -213,160 +147,49 @@ export class FormDesignerService {
 
         return formDesignDetails;
     }
-
-    setSelectedFormDesignDetail(formDesignDetail: FormDesignDetail): void {
-        this._selectedFormDesignDetailSubject.next(formDesignDetail);
-    }
     
-
-    // moveField(formField: FormField, toIndex: number, parentID?: number, column?: number): void {
-    //     if (parentID != null && column != null) {
-    //         this.moveParented(formField, toIndex, parentID, column);
-    //     } else {
-    //         this.moveNonParented(formField, toIndex);
-    //     }
-    // }
-
-    // private moveNonParented(formField: FormField, toIndex: number) {
-    //     let allFormFields: FormField[] = this.getFormFields();
-
-    //     const fromIndex = allFormFields.findIndex(x => x.formFieldID === formField.formFieldID);
-    //     if (fromIndex < toIndex) {
-    //         toIndex -= 1;
-    //     }
-
-    //     const toBeMoved = allFormFields.find(x => x.formFieldID === formField.formFieldID);
-    //     toBeMoved.seqNo = toIndex + 1;
-
-    //     const remainingFormFields = allFormFields.filter(x => x.formFieldID !== formField.formFieldID);
-
-    //     const movedFormFields = [
-    //         ...remainingFormFields.slice(0, toIndex),
-    //         toBeMoved,
-    //         ...remainingFormFields.slice(toIndex)
-    //     ];
-
-    //     const sortedFormFields = this.updateSeqNo(movedFormFields);
-    //     console.log(sortedFormFields);
-    //     this._formFieldsSubject.next(sortedFormFields);
-    // }
-
-    // private moveParented(formField: FormField, toIndex: number, parentID: number, column: number) {
-    //     const allFormFields: FormField[] = this.getFormFields();
-    //     // move within same parent and same column
-
-    //     allFormFields.forEach(function (formField) {
-    //     });
-
-
-    //     // if (formField.parentID === parentID && formField.column === column) {
-    //     //     const parentFormField = allFormFields.find(x => x.formFieldID === parentID);
-    //     //     const parentIndex = allFormFields.indexOf(parentFormField);
-    //     //     const toBeMoved = parentFormField.columns[column].formFields.find(x => x.formFieldID === formField.formFieldID);
-    //     //     const remainingFormFields = parentFormField.columns[column].formFields.filter(x => x.formFieldID !== formField.formFieldID);
-
-    //     //     const movedChildColFormFields = [
-    //     //         ...remainingFormFields.slice(0, toIndex),
-    //     //         toBeMoved,
-    //     //         ...remainingFormFields.slice(toIndex)
-    //     //     ].map((x, xIndex) => {
-    //     //         x.seqNo = xIndex + 1;
-    //     //         return x;
-    //     //     });
-
-    //     //     allFormFields[parentIndex].columns[column].formFields = movedChildColFormFields;
-    //     // }
-    // }
-
-    // private moveChild(formField: FormField, toIndex: number, parentID: number, column: number) {
-        // const allFormFields = this.getFormFields();
-        // const oldParentIndex = allFormFields.findIndex(x => x.formFieldID === formField.parentID);
-        // const newParentIndex = allFormFields.findIndex(x => x.formFieldID === parentID);
-
-        // // if change parent 
-        // if (formField.parentID !== parentID) {
-        //     // remove from parent
-        //     const childFormFields = allFormFields[oldParentIndex].childFormFields;
-        //     allFormFields[oldParentIndex].childFormFields = childFormFields.filter(x => x.formFieldID !== formField.formFieldID);
-
-        //     // add to new parent
-        //     allFormFields[newParentIndex].childFormFields.
-        // }
-
-
-        // formField.parentID = parentID;
-        // formField.column = column;
-
-
-        // const allFormFields = this.getFormFields();
-
-        // allFormFields.forEach(function (formField) {
-        //     if (formField.formFieldID === parentID) {
-        //         // const columnChildFormField = formField.childFormFields.filter(x => x.column === column);
-
-        //     }
-        // });
-        
-
-        // let childFormFields = this.getFormFields().filter(x => x.formFieldID === formField.parentID);
-        
-        // const fromIndex = childFormFields.findIndex(x => x.formFieldID === formField.formFieldID);
-        // if (fromIndex < toIndex) {
-        //     toIndex -= 1;
-        // }
-
-        // const toBeMoved = childFormFields.find(x => x.formFieldID === formField.formFieldID);
-        // toBeMoved.seqNo = toIndex + 1;
-
-        // const remainingFormFields = childFormFields.filter(x => x.formFieldID !== formField.formFieldID);
-
-        // const movedFormFields = [
-        //     ...remainingFormFields.slice(0, toIndex),
-        //     toBeMoved,
-        //     ...remainingFormFields.slice(toIndex)
-        // ];
-
-        // const sortedFormFields = this.updateSeqNo(movedFormFields);
-        // this._formFieldsSubject.next(sortedFormFields);
-    // }
-
-    searchField(searchStr: string): void {
-        this._searchSubject.next(searchStr);
+    // find index of given FormDesignDetail
+    // if formDesignDetail is nested
+    // will return index relative to the nested FormDesignDetail
+    private findFormDesignDetailIndex(formDesignDetail: FormDesignDetail): number {
+        const allFormDesignDetails = this.getAllFormDesignDetails();
+        for (let i = 0; i < allFormDesignDetails.length; i++) {
+            // search top level
+            if (allFormDesignDetails[i].fieldCode === formDesignDetail.fieldCode) {
+                return i;
+            // search child level
+            } else if (allFormDesignDetails[i].subDesignDetails != null) {
+                const columnData = allFormDesignDetails[i].subDesignDetails;
+                for (let j = 0; j < columnData.length; j++) {
+                    const subDesignDetails = columnData[j];
+                    for (let k = 0; k < subDesignDetails.length; k++) {
+                        if (subDesignDetails[k].fieldCode === formDesignDetail.fieldCode)
+                            return k;
+                    }
+                }
+            }
+        }
     }
 
+    // update seqNo of formDesignDetails
+    // including nested ones
     private updateSeqNo(formDesignDetails: FormDesignDetail[], parentID?: number): FormDesignDetail[] {
-        // return formFields
-        //     .sort((a,b) => { return a.parentID - b.parentID || a.column - b.column || a.seqNo - b.seqNo })
-        //     .map((x, index) => { x.seqNo = index + 1; return x; });
         return formDesignDetails.map((x, xIndex) => {
             x.seqNo = xIndex + 1;
-            // if (x.columns?.length > 0 && x.zoneProperties != null) {    
-            //     x.columns.map(function (column) {
-            //         column.formFields.map(function (colFormField, colIndex) {
-            //             colFormField.seqNo = colIndex + 1;
-            //             return colFormField;
-            //         })
-            //     });
-            //     // x.childFormFields = x.childFormFields
-            //     //     .sort((a,b) => a.column - b.column || a.seqNo - b.seqNo);
-
-            //     // for (let i = 1; i < x.zoneProperties.columns + 1; i++) {
-            //     //     x.childFormFields.filter(x => x.column === i)
-            //     //         .map((y, yIndex) => {
-            //     //             y.seqNo = yIndex + 1;
-            //     //             return y;
-            //     //         });
-            //     // }
-
-            //     // x.childFormFields = x.childFormFields
-            //     //     .sort((a,b) => a.column - b.column || a.seqNo - b.seqNo);
-            // }
-            
+            // if field has columns
+            // iterate subDesignDetails to update seqNo
+            if (x.columns !== 0) {
+                x.subDesignDetails?.map((columns) => {
+                    columns.map((childFormField, yIndex) => {
+                        childFormField.seqNo = yIndex + 1;
+                    });
+                })
+            }
             return x;
         }).sort((a,b) => a.seqNo - b.seqNo);
     }
     
-    // get current copy of subject values
+    // get current copy of all form design details
     private getAllFormDesignDetails(flatten: boolean = false) {
         if (flatten) {
             let allFormDesignDetails = [...this._formDesignDetailsSubject.getValue()];
@@ -382,8 +205,8 @@ export class FormDesignerService {
 
         return [...this._formDesignDetailsSubject.getValue()];
     }
-
-    private getFieldTypes() {
+    // get current copy of all field types
+    private getAllFieldTypes() {
         return [...this._fieldTypesSubject.getValue()];
     }
 }
