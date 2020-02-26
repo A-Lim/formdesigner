@@ -39,12 +39,14 @@ export class FieldOptionsPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  onColumnsChange() {
-    if (this.selectedFormDesignDetail.columns > this.selectedFormDesignDetail.subDesignDetails.length) {
-      this.selectedFormDesignDetail.addColumns();
-    } else {
-      this.selectedFormDesignDetail.removeColumns();
-    }
+  onColumnsChange(column: number) {
+    console.log(column);
+    this.formDesignService.updateColumnCount(this.selectedFormDesignDetail, column);
+    // if (this.selectedFormDesignDetail.columns > this.selectedFormDesignDetail.subDesignDetails.length) {
+    //   this.selectedFormDesignDetail.addColumn();
+    // } else {
+    //   this.selectedFormDesignDetail.removeColumn();
+    // }
   }
 
   onSearchFieldBlur() {

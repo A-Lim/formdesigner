@@ -29,15 +29,13 @@ export class FormDesignerService {
             { fieldTypeID: 2, fieldTypeName: "Textbox", fieldTypeCategory: FieldTypeCategory.Item, label: "Textbox", seqNo: 2 } as FieldType,
             { fieldTypeID: 3, fieldTypeName: "TextArea", fieldTypeCategory: FieldTypeCategory.Item, label: "Textarea", seqNo: 3 } as FieldType,
             { fieldTypeID: 4, fieldTypeName: "Zone", fieldTypeCategory: FieldTypeCategory.Layout, label: "Zone", seqNo: 4 } as FieldType,
-            { fieldTypeID: 4, fieldTypeName: "Table", fieldTypeCategory: FieldTypeCategory.Layout, label: "Table", seqNo: 5 } as FieldType
+            { fieldTypeID: 5, fieldTypeName: "Table", fieldTypeCategory: FieldTypeCategory.Layout, label: "Table", seqNo: 5 } as FieldType
         ];
 
         this._fieldTypesSubject.next(fieldTypes);
     }
 
     retrieveFormDesignDetail(): void {
-        // const currentFormFields = this._formFieldsSubject.getValue();
-        // const formFieldID = currentFormFields !== null ? currentFormFields.length + 1 : 1;
         const headingFieldType = this._fieldTypesSubject.getValue()[0];
         const newFormField = new FormDesignDetail(1, headingFieldType, "Heading1");
 
@@ -52,13 +50,13 @@ export class FormDesignerService {
         this._formDesignDetailsSubject.next(formfields);
     }
 
-    addFormDesignDetail(fieldType: FieldType, index: number, parentFieldCode?: string, column?: number): void {
+    addFormDesignDetail(fieldType: FieldType, index: number, parentFieldCode?: string, columnIndex?: number): void {
         const allFormDesignDetails = this.getAllFormDesignDetails();
         const formDesignDetailID = this.getAllFormDesignDetails(true).length + 1;
         const newFieldCode = fieldType.label + formDesignDetailID;
-        const newFormDesignDetail  = new FormDesignDetail(formDesignDetailID, fieldType, newFieldCode);
+        const newFormDesignDetail  = new FormDesignDetail(formDesignDetailID, fieldType, newFieldCode, parentFieldCode, columnIndex);
         // add newFormDesignDetail to list
-        const updatedFormDesignDetails = this.addToList(allFormDesignDetails, newFormDesignDetail, index, parentFieldCode, column);
+        const updatedFormDesignDetails = this.addToList(allFormDesignDetails, newFormDesignDetail, index, parentFieldCode, columnIndex);
 
         const sortedFormDesignDetails = this.updateSeqNo(updatedFormDesignDetails);
         this._formDesignDetailsSubject.next(sortedFormDesignDetails);
@@ -66,25 +64,23 @@ export class FormDesignerService {
         this.setSelectedFormDesignDetail(newFormDesignDetail);
     }
 
-    moveFormDesignDetail(formDesignDetail: FormDesignDetail, toIndex: number, parentFieldCode?: string, column?: number): void {
+    moveFormDesignDetail(formDesignDetail: FormDesignDetail, toIndex: number, parentFieldCode?: string, columnIndex?: number): void {
         let allFormDesignDetails = this.getAllFormDesignDetails();
         let fromIndex = null;
 
-        // TODO
-        // moving from non-parent to parented (issue)
-        // moving from parent to non-parent 
-        // moving between different columns
-        fromIndex = this.findFormDesignDetailIndex(formDesignDetail);
-        // fromIndex = allFormDesignDetails.findIndex(x => x.formDesignDetailID === formDesignDetail.formDesignDetailID);
-        if (fromIndex < toIndex) {
-            toIndex -= 1;
-        }
+        // if moving within the same parent and column
+        // check fromIndex
+        if (formDesignDetail.parentFieldCode === parentFieldCode && 
+            formDesignDetail.columnNo-1 === columnIndex) {
 
-        console.log(fromIndex);
+            fromIndex = this.findFormDesignDetailIndex(formDesignDetail);
+            if (fromIndex < toIndex) 
+                toIndex -= 1;
+        }
 
         const toBeMoved = formDesignDetail;
         allFormDesignDetails = this.removeFromList(allFormDesignDetails, toBeMoved.fieldCode);
-        allFormDesignDetails = this.addToList(allFormDesignDetails, formDesignDetail, toIndex, parentFieldCode, column);
+        allFormDesignDetails = this.addToList(allFormDesignDetails, formDesignDetail, toIndex, parentFieldCode, columnIndex);
 
         const sortedFormFields = this.updateSeqNo(allFormDesignDetails);
         this._formDesignDetailsSubject.next(sortedFormFields);
@@ -94,14 +90,28 @@ export class FormDesignerService {
         this._selectedFormDesignDetailSubject.next(formDesignDetail);
     }
     
-
     searchField(searchStr: string): void {
         this._searchSubject.next(searchStr);
     }
 
+    updateColumnCount(formDesignDetail: FormDesignDetail, columns: number) {
+        // if not zone
+        // block function usage
+        if (formDesignDetail.fieldType.fieldTypeID !== 4)
+            return;
+
+        const allFormDesignDetails = this.getAllFormDesignDetails();
+        for (let i = 0; i < allFormDesignDetails.length; i++) {
+            if (allFormDesignDetails[i].fieldType === formDesignDetail.fieldType) {
+                allFormDesignDetails[i].columns = columns;
+                allFormDesignDetails[i].updateColumnCount(columns);
+            }
+        }
+    }
+
     /************** PRIVATE METHODS **************/
     private addToList(formDesignDetails: FormDesignDetail[], newFormDesignDetail: FormDesignDetail, index: number, parentFieldCode?: string, column?: number) {
-        if (parentFieldCode != null && column != null) {
+        if (parentFieldCode != null) {
             for (let i = 0; i < formDesignDetails.length; i++) {
                 if (formDesignDetails[i].fieldCode === parentFieldCode) {
                     formDesignDetails[i].addSubDesignDetails(newFormDesignDetail, index, column);
@@ -205,6 +215,7 @@ export class FormDesignerService {
 
         return [...this._formDesignDetailsSubject.getValue()];
     }
+
     // get current copy of all field types
     private getAllFieldTypes() {
         return [...this._fieldTypesSubject.getValue()];

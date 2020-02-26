@@ -25,10 +25,10 @@
                     <input type="text" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.fieldCode" />
                 </div>
             </div>
-            <div *ngIf="selectedFormDesignDetail.columns" class="col-md-12">
+            <div *ngIf="selectedFormDesignDetail.fieldType.fieldTypeID === 4" class="col-md-12">
                 <div class="form-group">
                     <label for="fieldCode">Number of Columns *</label>
-                    <input type="number" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.columns" />
+                    <input type="number" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.columns" (change)="onColumnsChange(selectedFormDesignDetail.columns)" />
                 </div>
             </div>
             <div class="col-md-12">

@@ -24,38 +24,40 @@ export class FormDesignDetail {
     public seqNo: number;
     public options: any;
     public settings: any;
-    
+    public parentFieldCode: string;
+    public columnNo: number;
     
     // container properties
     public columns: number;
     public subDesignDetails?: FormDesignDetail[][];
 
-    constructor(formDesignDetailID: number, fieldType: FieldType, fieldCode: string) {
+    constructor(formDesignDetailID: number, fieldType: FieldType, fieldCode: string, parentFieldCode?: string, columnNo?: number) {
         this.formDesignDetailID = formDesignDetailID;
         this.fieldType = fieldType;
         this.fieldCode = fieldCode;
+        this.parentFieldCode = parentFieldCode;
+        this.columnNo = columnNo;
 
-        if (fieldType.fieldTypeID === 4) {
-            this.subDesignDetails = new Array();
-            // zone default columns
-            this.columns = 2;
-            for (let i = 0; i < this.columns; i++) {
-                this.subDesignDetails.push([]);
-            }
-        }
+        this.initColumns();
     }
 
-    public addSubDesignDetails(formDesignDetail: FormDesignDetail, posIndex: number, columnIndex: number, ) {
+    public addSubDesignDetails(formDesignDetail: FormDesignDetail, posIndex: number, columnIndex: number = 0) {
         if (columnIndex >= this.columns) {
             for (let i = 0; i < this.columns; i++) {
                 if (this.subDesignDetails[i] == null) 
                     this.subDesignDetails.push([]);
             }
         }
+
+        formDesignDetail.columnNo = columnIndex + 1;
         this.subDesignDetails[columnIndex].splice(posIndex, 0, formDesignDetail);
     }
 
     public deleteSubDesignDetails(formDesignDetail: FormDesignDetail) {
+
+        if (!this.hasChild(formDesignDetail.fieldCode))
+            return;
+        
         const toBeDeleted = formDesignDetail;
         let columnIndex: number = null;
         let posIndex: number = null;
@@ -68,19 +70,55 @@ export class FormDesignDetail {
             });
         });
 
-        console.log("COLUMN");
-        console.log(columnIndex);
-        console.log("POSITION");
-        console.log(posIndex);
-        // this.subDesignDetails[formDesignDetail]
+        this.subDesignDetails[columnIndex].splice(posIndex, 1);
     }
 
-    public addColumns() {
+    public hasChild(fieldCode: string) {
+        return this.fieldCode === fieldCode;
+    }
+
+    public addColumn() {
         this.subDesignDetails.push([]);
     }
 
-    removeColumns() {
+    public removeColumn() {
         this.subDesignDetails.pop();
+    }
+
+    private initColumns() {
+        this.subDesignDetails = new Array();
+        switch (this.fieldType.fieldTypeID) {
+            // zone
+            case 4:
+                this.columns = 2;
+                break;
+            
+            // table
+            case 5:
+                this.columns = 1;
+                break;
+            
+            default:
+                break;
+        }
+        
+        for (let i = 0; i < this.columns; i++) {
+            this.addColumn();
+        }
+    }
+
+    public updateColumnCount(columns: number) {
+        const difference = this.columns - columns;
+
+        if (difference < 0) {
+            for (let i = 0; i < Math.abs(difference); i++) {
+                this.addColumn();
+            }
+        } else if (difference > 0) {
+            for (let i = 0; i < Math.abs(difference); i++) {
+                this.removeColumn();
+            }
+        }
     }
 
     // formFieldID: number;

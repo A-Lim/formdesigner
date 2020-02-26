@@ -1,0 +1,13 @@
+/* .table .dndPlaceholder { flex: 0 0 auto; }
+.table .form-design-detail { flex: 0 0 auto; }
+.table-dropzone { display: flex; flex-wrap: nowrap; overflow-x: auto; } */
+
+/* .flex-overflow-x { flex-wrap: nowrap; overflow-x: auto; } */
+
+/* .table.normal-view .dndPlaceholder,
+.table.normal-view .form-design-detail { 
+    flex: 0 0 auto;
+} */
+.table .normal-view { display: flex; flex-wrap: nowrap; overflow-x: auto; }
+.table .condensed-view { display: flex; flex-wrap: wrap; overflow-x: auto; }
+.table .normal-view > .card { flex: 0 0 auto; }

@@ -50,22 +50,6 @@ export class DesignerPanelComponent implements OnInit, OnDestroy {
       });
   }
 
-  // onDraggableMoved(event) {
-  //   // console.log(event);
-  // }
-
-  // onDragStart(formFieldID: number, event: DragEvent) {
-  //   this.formDesignService.onDragStart(formFieldID);
-  // }
-
-  // onDragCanceled(event: DragEvent) {
-  //   this.formDesignService.onDragCanceled();
-  // }
-
-  // onDragEnd() {
-
-  // }
-
   onDrop(event: DndDropEvent) {
     
     switch (event.dropEffect) {

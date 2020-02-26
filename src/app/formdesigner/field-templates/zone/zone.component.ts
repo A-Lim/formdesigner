@@ -13,36 +13,20 @@ import { takeUntil, map } from 'rxjs/operators';
 export class ZoneComponent implements OnInit {
   @Input()
   public formDesignDetail: FormDesignDetail;
-  // used to loops
-  public arr: Array<number>;
 
   public searchStr: string;
   public selectedFormDesignDetail: FormDesignDetail;
-  public horizontal = true;
-
-  private _unsubscribe$ = new Subject<void>();
 
   // fields allowed in zone
   public allowedFieldTypes = [1,2,3];
+
+  private _unsubscribe$ = new Subject<void>();
 
   constructor(private formDesignService: FormDesignerService) {
 
   }
 
   ngOnInit() {
-    // keep track of all form fields
-    // this.formDesignService.formFields$
-    //   .pipe(
-    //     takeUntil(this._unsubscribe$),
-    //     // only child field
-    //     map(x => x.filter(y => y.parentID == this.formField.formFieldID))
-    //   )
-    //   .subscribe(formFields => {
-    //     this.formFields = formFields;
-    //     // console.log(formFields);
-    //   });
-
-
     // keep track of which form field is selected
     this.formDesignService.selectedFormDesignDetail$
       .pipe(takeUntil(this._unsubscribe$))
@@ -58,7 +42,6 @@ export class ZoneComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent, column: number) {
-    
     switch (event.dropEffect) {
       case EffectAllowed.Copy:
         const fieldType: FieldType = event.data;
@@ -84,10 +67,6 @@ export class ZoneComponent implements OnInit {
       default:
         break;
     }
-  }
-
-  onFormFocus() {
-    // this.formDesignService.setSelectedFormField(null);
   }
 
   onFormDesignDetailFocus(formDesignDetail: FormDesignDetail, event: MouseEvent) {

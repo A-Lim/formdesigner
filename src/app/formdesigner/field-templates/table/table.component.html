@@ -1,1 +1,41 @@
-<p>table works!</p>
+<div class="card-body table" style="min-height: 100px; background-color: inherit;">
+    {{ formDesignDetail.fieldType.label }}
+    <div class="card">
+        <div class="card-body"
+            [ngClass]="{ 
+                'condensed-view': isCondensedView,
+                'normal-view': !isCondensedView
+            }"
+            dndDropzone
+            [dndHorizontal]="true"
+            (dndDrop)="onDrop($event)">
+            <div class="dndPlaceholder" style="width: 40px; border: 1px gray dashed; padding: 15px; background-color: lightgray;"
+                dndPlaceholderRef>
+            </div>
+
+            <ng-container *ngIf="formDesignDetail.subDesignDetails.length > 0">
+                <!-- table will always have only 1 column -->
+                <ng-container *ngFor="let subDesignDetail of formDesignDetail.subDesignDetails[0]">
+                    <ng-container [ngSwitch]="subDesignDetail.fieldType.fieldTypeID" >
+                        <div class="card mb-2 form-design-detail" style="width: 150px;"
+                            [ngClass]="{ 
+                                'selected-form-field': selectedFormDesignDetail?.fieldCode === subDesignDetail.fieldCode,
+                                'searched-form-field': searchStr && subDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                            }"
+                            (click)="onFormDesignDetailFocus(subDesignDetail, $event)"
+                            [dndDraggable]="subDesignDetail"
+                            [dndEffectAllowed]="'move'"
+                            [dndDraggingSourceClass]="'onDragged'">
+    
+                            <div *ngSwitchDefault class="card-body" >{{ subDesignDetail.fieldType.label }}</div>
+
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+
+            
+        </div>
+    </div>
+    <input type="checkbox" [(ngModel)]="isCondensedView" id="condensedView" /> <label for="condensedView"><small>Condensed view</small></label>
+</div>

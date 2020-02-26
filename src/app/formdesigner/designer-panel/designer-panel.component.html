@@ -7,51 +7,36 @@
     <option>30</option>
 </select>
 <div class="card" style="min-height: 500px;">
-    <div class="card-body"
-        [ngClass]="'scale-' + scale"
-        dndDropzone
-        (dndDrop)="onDrop($event)">
+    <div class="card-body" [ngClass]="'scale-' + scale"
+        dndDropzone (dndDrop)="onDrop($event)">
         dropzone 
-        <!-- <div [ngClass]="'scale-' + scale"> -->
-            <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
-                dndPlaceholderRef>
-            </div>
+        <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
+            dndPlaceholderRef>
+        </div>
 
-            <ng-container *ngFor="let formDesignDetail of formDesignDetails">
-                <ng-container [ngSwitch]="formDesignDetail.fieldType.fieldTypeID" >
+        <ng-container *ngFor="let formDesignDetail of formDesignDetails">
+            <ng-container [ngSwitch]="formDesignDetail.fieldType.fieldTypeID" >
+                <div class="card mb-2" 
+                    [dndDraggable]="formDesignDetail"
+                    [dndEffectAllowed]="'move'"
+                    [dndDraggingSourceClass]="'onDragged'"
+                    [ngClass]="{ 
+                        'selected-form-field': selectedFormDesignDetail?.fieldCode == formDesignDetail.fieldCode,
+                        'searched-form-field': searchStr && formDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                    }"
+                    (click)="onFormDesignDetailFocus(formDesignDetail)">
+
                     <!-- zone -->
-                    <app-zone *ngSwitchCase="4"
-                        [formDesignDetail]=formDesignDetail
-                        class="card mb-2" 
-                        [ngClass]="{ 
-                            'selected-form-field': selectedFormDesignDetail?.fieldCode == formDesignDetail.fieldCode,
-                            'searched-form-field': searchStr && formDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
-                        }"
-                        (click)="onFormDesignDetailFocus(formDesignDetail)"
-                        [dndDraggable]="formDesignDetail"
-                        [dndEffectAllowed]="'move'"
-                        [dndDraggingSourceClass]="'onDragged'"
-                        >
-                    </app-zone>
+                    <app-zone *ngSwitchCase="4" [formDesignDetail]=formDesignDetail></app-zone>
+
+                    <!-- table -->
+                    <app-table *ngSwitchCase="5" [formDesignDetail]=formDesignDetail></app-table>
 
                     <!-- default -->
-                    <div *ngSwitchDefault
-                        class="card mb-2" 
-                        [ngClass]="{ 
-                            'selected-form-field': selectedFormDesignDetail?.fieldCode == formDesignDetail.fieldCode,
-                            'searched-form-field': searchStr && formDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
-                        }"
-                        (click)="onFormDesignDetailFocus(formDesignDetail)"
-                        [dndDraggable]="formDesignDetail"
-                        [dndEffectAllowed]="'move'"
-                        [dndDraggingSourceClass]="'onDragged'">
-
-                        <div class="card-body">
-                            {{ formDesignDetail.fieldType.label }}
-                        </div>
-                    </div>
-                </ng-container>
+                    <div class="card-body" *ngSwitchDefault >{{ formDesignDetail.fieldType.label }}</div>
+                </div>
+                
             </ng-container>
-        <!-- </div> -->
+        </ng-container>
     </div>
 </div>
