@@ -13,16 +13,15 @@
         <div style="border: 1px gray dashed; padding: 15px; background-color: lightgray;"
             dndPlaceholderRef>
         </div>
-
-        <ng-container *ngFor="let formDesignDetail of formDesignDetails">
+        <ng-container *ngFor="let formDesignDetail of formDesignDetails$ | async">
             <ng-container [ngSwitch]="formDesignDetail.fieldType.fieldTypeID" >
                 <div class="card mb-2" 
                     [dndDraggable]="formDesignDetail"
                     [dndEffectAllowed]="'move'"
                     [dndDraggingSourceClass]="'onDragged'"
                     [ngClass]="{ 
-                        'selected-form-field': selectedFormDesignDetail?.fieldCode == formDesignDetail.fieldCode,
-                        'searched-form-field': searchStr && formDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                        'selected-form-field': (selectedFormDesignDetail$ | async)?.fieldCode == formDesignDetail.fieldCode,
+                        'searched-form-field': (search$ | async) != '' && formDesignDetail.fieldCode.toLowerCase().includes((search$ | async | lowercase))
                     }"
                     (click)="onFormDesignDetailFocus(formDesignDetail)">
 

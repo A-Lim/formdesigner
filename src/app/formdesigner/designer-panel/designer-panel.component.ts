@@ -12,11 +12,14 @@ import { takeUntil, filter, map } from 'rxjs/operators';
   styleUrls: ['./designer-panel.component.css']
 })
 export class DesignerPanelComponent implements OnInit, OnDestroy {
-  // public formFields$: Observable<FormField[]>;
-  public formDesignDetails: FormDesignDetail[];
+  public formDesignDetails$: Observable<FormDesignDetail[]>;
+  
+  public selectedFormDesignDetail$: Observable<FormDesignDetail>;
+  public search$: Observable<string>;
+  // public formDesignDetails: FormDesignDetail[];
 
   public searchStr: string;
-  public selectedFormDesignDetail: FormDesignDetail;
+  
   public scale = 100;
 
   private _unsubscribe$ = new Subject<void>();
@@ -26,28 +29,32 @@ export class DesignerPanelComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.formDesignService.retrieveFormDesignDetail();
     
+    this.formDesignDetails$ = this.formDesignService.formDesignDetail$;
+    this.selectedFormDesignDetail$ = this.formDesignService.selectedFormDesignDetail$;
+    this.search$ = this.formDesignService.search$;
     // keep track of all form fields
-    this.formDesignService.formDesignDetail$
-      .pipe(
-        takeUntil(this._unsubscribe$),
-      )
-      .subscribe(formDesignDetails => {
-        this.formDesignDetails = formDesignDetails;
-      });
+    // this.formDesignService.formDesignDetail$
+    //   .pipe(
+    //     takeUntil(this._unsubscribe$),
+    //   )
+    //   .subscribe(formDesignDetails => {
+    //     this.formDesignDetails = formDesignDetails;
+    //     console.log(this.formDesignDetails);
+    //   });
 
     // keep track of which form field is selected
-    this.formDesignService.selectedFormDesignDetail$
-      .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(selectedFormDesignDetail => {
-        this.selectedFormDesignDetail = selectedFormDesignDetail;
-      });
+    // this.formDesignService.selectedFormDesignDetail$
+    //   .pipe(takeUntil(this._unsubscribe$))
+    //   .subscribe(selectedFormDesignDetail => {
+    //     this.selectedFormDesignDetail = selectedFormDesignDetail;
+    //   });
 
     // keep track search string
-    this.formDesignService.search$
-      .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(searchStr => {
-        this.searchStr = searchStr;
-      });
+    // this.formDesignService.search$
+    //   .pipe(takeUntil(this._unsubscribe$))
+    //   .subscribe(searchStr => {
+    //     this.searchStr = searchStr;
+    //   });
   }
 
   onDrop(event: DndDropEvent) {

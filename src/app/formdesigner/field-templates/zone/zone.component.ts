@@ -14,8 +14,10 @@ export class ZoneComponent implements OnInit {
   @Input()
   public formDesignDetail: FormDesignDetail;
 
-  public searchStr: string;
-  public selectedFormDesignDetail: FormDesignDetail;
+  // public searchStr: string;
+  // public selectedFormDesignDetail: FormDesignDetail;
+  public selectedFormDesignDetail$: Observable<FormDesignDetail>;
+  public search$: Observable<string>;
 
   // fields allowed in zone
   public allowedFieldTypes = [1,2,3];
@@ -23,22 +25,24 @@ export class ZoneComponent implements OnInit {
   private _unsubscribe$ = new Subject<void>();
 
   constructor(private formDesignService: FormDesignerService) {
-
   }
 
   ngOnInit() {
+    this.selectedFormDesignDetail$ = this.formDesignService.selectedFormDesignDetail$;
+    this.search$ = this.formDesignService.search$;
+    
     // keep track of which form field is selected
-    this.formDesignService.selectedFormDesignDetail$
-      .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(formDesignDetail => {
-        this.selectedFormDesignDetail = formDesignDetail;
-      });
+    // this.formDesignService.selectedFormDesignDetail$
+    //   .pipe(takeUntil(this._unsubscribe$))
+    //   .subscribe(formDesignDetail => {
+    //     this.selectedFormDesignDetail = formDesignDetail;
+    //   });
 
-    this.formDesignService.search$
-      .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(searchStr => {
-        this.searchStr = searchStr;
-      });
+    // this.formDesignService.search$
+    //   .pipe(takeUntil(this._unsubscribe$))
+    //   .subscribe(searchStr => {
+    //     this.searchStr = searchStr;
+    //   });
   }
 
   onDrop(event: DndDropEvent, column: number) {
@@ -77,7 +81,6 @@ export class ZoneComponent implements OnInit {
   }
 
   private resetSearch() {
-    this.searchStr = null;
     this.formDesignService.searchField(null);
   }
 

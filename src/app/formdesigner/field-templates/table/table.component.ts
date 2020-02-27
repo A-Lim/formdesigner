@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormDesignDetail, EffectAllowed, FieldType } from '../../fieldtype.model';
 import { FormDesignerService } from '../../formdesigner.service';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DndDropEvent } from 'ngx-drag-drop';
 
@@ -13,8 +13,12 @@ import { DndDropEvent } from 'ngx-drag-drop';
 export class TableComponent implements OnInit {
   @Input()
   public formDesignDetail: FormDesignDetail;
-  public selectedFormDesignDetail: FormDesignDetail;
-  public searchStr: string;
+  // public selectedFormDesignDetail: FormDesignDetail;
+  // public searchStr: string;
+
+  public selectedFormDesignDetail$: Observable<FormDesignDetail>;
+  public search$: Observable<string>;
+
   public allowedFieldTypes = [1,2,3];
   public isCondensedView = false;
 
@@ -23,18 +27,21 @@ export class TableComponent implements OnInit {
   constructor(public formDesignService: FormDesignerService) { }
 
   ngOnInit(): void {
-    // keep track of which form field is selected
-    this.formDesignService.selectedFormDesignDetail$
-      .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(formDesignDetail => {
-        this.selectedFormDesignDetail = formDesignDetail;
-      });
+    this.selectedFormDesignDetail$ = this.formDesignService.selectedFormDesignDetail$;
+    this.search$ = this.formDesignService.search$;
 
-    this.formDesignService.search$
-      .pipe(takeUntil(this._unsubscribe$))
-      .subscribe(searchStr => {
-        this.searchStr = searchStr;
-      });
+    // keep track of which form field is selected
+    // this.formDesignService.selectedFormDesignDetail$
+    //   .pipe(takeUntil(this._unsubscribe$))
+    //   .subscribe(formDesignDetail => {
+    //     this.selectedFormDesignDetail = formDesignDetail;
+    //   });
+
+    // this.formDesignService.search$
+    //   .pipe(takeUntil(this._unsubscribe$))
+    //   .subscribe(searchStr => {
+    //     this.searchStr = searchStr;
+    //   });
   }
 
   onDrop(event: DndDropEvent) {
@@ -73,7 +80,6 @@ export class TableComponent implements OnInit {
   }
 
   private resetSearch() {
-    this.searchStr = null;
     this.formDesignService.searchField(null);
   }
 

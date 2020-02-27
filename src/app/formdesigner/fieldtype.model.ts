@@ -107,8 +107,8 @@ export class FormDesignDetail {
         }
     }
 
-    public updateColumnCount(columns: number) {
-        const difference = this.columns - columns;
+    public updateColumnCount() {
+        const difference = this.subDesignDetails.length - this.columns;
 
         if (difference < 0) {
             for (let i = 0; i < Math.abs(difference); i++) {
@@ -165,6 +165,41 @@ export enum EffectAllowed {
     CopyLink = 'copyLink',
     LinkMove = 'linkMove',
     All = 'all'
+}
+
+export enum FieldTypeID {
+    Heading,
+    TextBoxString,
+    TextBoxNum,
+    TextArea,
+    Dropdown = 1000,
+    RadioButton = 1001,
+    Checkbox = 1002,
+    FullName,
+    Email,
+    Calendar,
+    FileUpload,
+    MultipleSelect,
+    LineBreak,
+    SectionTitle,
+    Table = 5,
+    PeoplePicker,
+    HTMLControl,
+    Zone = 4,
+    Label,
+    UserProfile,
+    WebService,
+    OnBehalfOf,
+    Year,
+    Time,
+    SystemField,
+    Calculated,
+    WorkflowStage,
+    HyperLinkImage,
+    LookUp,
+    HyperLinks,
+    FileUploadService,
+    Captcha
 }
 
 class ZoneProperties {

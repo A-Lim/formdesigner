@@ -14,8 +14,8 @@
                             <div 
                                 class="card mb-2" 
                                 [ngClass]="{ 
-                                    'selected-form-field': selectedFormDesignDetail?.fieldCode === subDesignDetail.fieldCode,
-                                    'searched-form-field': searchStr && subDesignDetail.fieldCode.toLowerCase().includes(searchStr?.toLowerCase())
+                                    'selected-form-field': (selectedFormDesignDetail$ | async)?.fieldCode === subDesignDetail.fieldCode,
+                                    'searched-form-field': (search$ | async) != '' && subDesignDetail.fieldCode.toLowerCase().includes((search$ | async | lowercase))
                                 }"
                                 (click)="onFormDesignDetailFocus(subDesignDetail, $event)"
                                 [dndDraggable]="subDesignDetail"

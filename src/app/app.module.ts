@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -31,6 +31,7 @@ import { TableComponent } from './formdesigner/field-templates/table/table.compo
     CommonModule,
     DndModule,
     FormsModule,
+    ReactiveFormsModule
     // DragulaModule.forRoot()
   ],
   providers: [],

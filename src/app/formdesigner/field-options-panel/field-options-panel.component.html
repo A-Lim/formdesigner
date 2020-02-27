@@ -3,42 +3,176 @@
         <div class="row">
             <div class="col-md-12">
                 <input type="text" class="form-control" placeholder="Search Field Code" 
-                    [(ngModel)]="searchStr" 
+                    [ngModel]="searchStr" 
                     (blur)="onSearchFieldBlur()"
                     (ngModelChange)="onSearchFieldChange($event)" />
             </div>
         </div>
     </div>
 </div>
-<div *ngIf="selectedFormDesignDetail" class="card">
+
+<div *ngIf="formDesignDetail" class="card">
     <div class="card-body">
         <h4 class="card-title">Field Properties</h4>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label>Field Type: </label> {{ selectedFormDesignDetail.fieldType.fieldTypeName }}
+        <form [formGroup]="formDesignDetailPropertiesForm">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Field Type: </label> {{ formDesignDetail.fieldType.fieldTypeName }}
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fieldCode">Field Code*</label>
+                        <input type="text" class="form-control" [ngClass]="{ 'is-invalid': fddProperties.fieldCode.errors != null }" formControlName="fieldCode" id="fieldCode" />
+                        <div class="invalid-feedback" *ngIf="fddProperties.fieldCode.errors?.required">Field Code is required.</div>
+                        <small class="help-block">Field Code wont be changeable after form is published.</small>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="label">Label*</label>
+                        <input type="text" class="form-control" formControlName="label" id="label" />
+                    </div>
+                </div>
+
+                <!-- Dropdown, RadioButton, Checkbox, Multiple Select -->
+                <div class="col-md-12" 
+                    *ngIf="[FieldTypeID.Dropdown, FieldTypeID.RadioButton, FieldTypeID.Checkbox, FieldTypeID.MultipleSelect]
+                        .includes(formDesignDetail.fieldType.fieldTypeID)">
+                    <div class="form-group">
+                        <label for="optionType">Option Type*</label>
+                        <select class="form-control" formControlName="optionType" id="optionType"></select>
+                    </div>
+                </div>
+
+                <!-- TextBoxNum -->
+                <div class="col-md-12" *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.TextBoxNum">
+                    <div class="form-group">
+                        <label for="regex">Regex*</label>
+                        <select class="form-control" formControlName="regex" id="regex"></select>
+                    </div>
+                </div>
+
+                 <!-- lookup -->
+                 <div class="col-md-12" *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.LookUp">
+                    <div class="form-group">
+                        <label for="lookupType">User Profile Field*</label>
+                        <select class="form-control" formControlName="lookupType" id="lookupType"></select>
+                    </div>
+                </div>
+
+                <!-- userprofile -->
+                <div class="col-md-12" *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.UserProfile">
+                    <div class="form-group">
+                        <label for="userProfileField">User Profile Field*</label>
+                        <select class="form-control" formControlName="userProfileField" id="userProfileField"></select>
+                    </div>
+                </div>
+
+                <!-- system property -->
+                <div class="col-md-12" *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.SystemField">
+                    <div class="form-group">
+                        <label for="systemProperty">System Property*</label>
+                        <select class="form-control" formControlName="systemProperty" id="systemProperty"></select>
+                    </div>
+                </div>
+
+                 <!-- calendar -->
+                 <div class="col-md-12" *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.Calendar">
+                    <div class="form-group">
+                        <label for="calendarFormat">Format*</label>
+                        <select class="form-control" formControlName="calendarFormat" id="calendarFormat"></select>
+                    </div>
+                </div>
+
+                <!-- workflow -->
+                <ng-container *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.WorkflowStage">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="workflow">Workflow*</label>
+                            <select class="form-control" formControlName="workflow" id="workflow"></select>
+                        </div>
+                    </div>
+    
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="workflowStage">Workflow Stage*</label>
+                            <select class="form-control" formControlName="workflowStage" id="workflowStage"></select>
+                        </div>
+                    </div>
+    
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="stageProperty">Stage Property*</label>
+                            <select class="form-control" formControlName="stageProperty" id="stageProperty"></select>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <div class="col-md-12">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" formControlName="isHidden" id="isHidden" />
+                        <label for="isHidden">Hidden Field</label>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" formControlName="isRequired" id="isRequired" />
+                        <label for="isRequired">Mandatory Field</label>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" formControlName="isDisabled" id="isDisabled" />
+                        <label for="isDisabled">Always Disabled</label>
+                    </div>
+                </div>
+
+                <!-- table -->
+                <ng-container *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.Table">
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" formControlName="tableRowNumber" id="tableRowNumber" />
+                            <label for="tableRowNumber">Show Table Row Number</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Table Width</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tableWidthType" formControlName="tableWidthType" id="tableWidthAuto" value="auto" checked>
+                            <label class="form-check-label" for="gridRadios1">Auto Adjust</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tableWidthType" formControlName="tableWidthType" id="tableWidthFixed" value="fixed">
+                            <label class="form-check-label" for="tableWidthFixed">Fixed</label>
+                        </div>
+                    </div>
+                </ng-container>
+                
+                <!-- zone -->
+                <div *ngIf="formDesignDetail.fieldType.fieldTypeID === FieldTypeID.Zone" class="col-md-12">
+                    <div class="form-group">
+                        <label for="fieldCode">Number of Columns*</label>
+                        <input type="number" class="form-control input-sm" formControlName="columns" />
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-primary">Edit Field Properties</button>
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="fieldCode">Field Code *</label>
-                    <input type="text" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.fieldCode" />
-                </div>
-            </div>
-            <div *ngIf="selectedFormDesignDetail.fieldType.fieldTypeID === 4" class="col-md-12">
-                <div class="form-group">
-                    <label for="fieldCode">Number of Columns *</label>
-                    <input type="number" class="form-control input-sm" [(ngModel)]="selectedFormDesignDetail.columns" (change)="onColumnsChange(selectedFormDesignDetail.columns)" />
-                </div>
-            </div>
-            <div class="col-md-12">
-                <button class="btn btn-primary">Edit Field Properties</button>
-            </div>
-        </div>
+        </form>
+        
     </div>
 </div>
 
-<div *ngIf="!selectedFormDesignDetail" class="card">
+<div *ngIf="!formDesignDetail" class="card">
     <div class="card-body">
         <h4 class="card-title">Form Properties</h4>
         <div class="row">

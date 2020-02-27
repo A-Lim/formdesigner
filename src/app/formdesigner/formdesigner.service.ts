@@ -94,20 +94,47 @@ export class FormDesignerService {
         this._searchSubject.next(searchStr);
     }
 
-    updateColumnCount(formDesignDetail: FormDesignDetail, columns: number) {
-        // if not zone
-        // block function usage
-        if (formDesignDetail.fieldType.fieldTypeID !== 4)
-            return;
-
+    updateFormDesignDetailProperties(formDesignDetail: FormDesignDetail, parentFieldCode?: string) {
         const allFormDesignDetails = this.getAllFormDesignDetails();
         for (let i = 0; i < allFormDesignDetails.length; i++) {
-            if (allFormDesignDetails[i].fieldType === formDesignDetail.fieldType) {
-                allFormDesignDetails[i].columns = columns;
-                allFormDesignDetails[i].updateColumnCount(columns);
+            if (allFormDesignDetails[i].fieldCode === formDesignDetail.fieldCode) {
+                allFormDesignDetails[i] = formDesignDetail;
+                break;
             }
         }
+        this._formDesignDetailsSubject.next(allFormDesignDetails);
     }
+
+    fieldCodeIsTaken(fieldCode: string) {
+        const allFormDesignDetails = this.getAllFormDesignDetails();
+
+        for (let i = 0; i < allFormDesignDetails.length; i++) {
+            if (allFormDesignDetails[i].fieldCode === fieldCode) {
+                return true;
+            } else {
+                if (allFormDesignDetails[i].hasChild(fieldCode))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    // updateColumnCount(formDesignDetail: FormDesignDetail, columns: number) {
+    //     // if not zone
+    //     // block function usage
+
+    //     // if (formDesignDetail.fieldType.fieldTypeID !== 4)
+    //     //     return;
+
+    //     // const allFormDesignDetails = this.getAllFormDesignDetails();
+    //     // for (let i = 0; i < allFormDesignDetails.length; i++) {
+    //     //     if (allFormDesignDetails[i].fieldType === formDesignDetail.fieldType) {
+    //     //         allFormDesignDetails[i].columns = columns;
+    //     //         allFormDesignDetails[i].updateColumnCount();
+    //     //     }
+    //     // }
+    // }
 
     /************** PRIVATE METHODS **************/
     private addToList(formDesignDetails: FormDesignDetail[], newFormDesignDetail: FormDesignDetail, index: number, parentFieldCode?: string, column?: number) {
